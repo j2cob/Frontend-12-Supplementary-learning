@@ -1,3 +1,4 @@
+import Footer from "@/src/components/Footer";
 import Header from "@/src/components/Header";
 import styled from "@emotion/styled";
 import Image from "next/image";
@@ -49,6 +50,42 @@ export default function Home() {
               height={466}
               alt="image"
             />
+            <LikeButton>
+              <Image
+                src="/images/icon-like.png"
+                width={21}
+                height={18}
+                alt="image"
+              />
+            </LikeButton>
+            <Inner>
+              <Row>
+                <ItemTitle>대표 태그</ItemTitle>
+                <ItemPrice>{item.price}</ItemPrice>
+              </Row>
+              <ItemName>{item.name}</ItemName>
+              <ItemDescription>{item.description}</ItemDescription>
+            </Inner>
+          </Item>
+        ))}
+      </List>{" "}
+      <List>
+        {list.map((item, index) => (
+          <Item key={index}>
+            <Image
+              src="http://placehold.it/600x400"
+              width={348}
+              height={466}
+              alt="image"
+            />
+            <LikeButton>
+              <Image
+                src="/images/icon-like.png"
+                width={21}
+                height={18}
+                alt="image"
+              />
+            </LikeButton>
             <Inner>
               <Row>
                 <ItemTitle>대표 태그</ItemTitle>
@@ -60,6 +97,7 @@ export default function Home() {
           </Item>
         ))}
       </List>
+      <Footer />
     </>
   );
 }
@@ -87,9 +125,18 @@ const List = styled.div({
 });
 const Item = styled.div({
   width: "calc((100% - 348px )/4)",
+  position: "relative",
+  marginBottom: 50,
   img: {
     width: "100% ",
   },
+});
+const LikeButton = styled.button({
+  position: "absolute",
+  top: 34,
+  right: 34,
+  border: 0,
+  background: "none",
 });
 const Row = styled.div({
   display: "flex",
