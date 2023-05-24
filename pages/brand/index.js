@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const list = [
   {
@@ -25,6 +26,10 @@ const list = [
 ];
 
 export default function Brand() {
+  const router = useRouter();
+  const onClickAdd = () => {
+    router.push("/add");
+  };
   return (
     <>
       <Container>
@@ -60,7 +65,7 @@ export default function Brand() {
           </ItemRow>
         </BestList>
         <MiddleRow>
-          <AddButton>상품 등록</AddButton>
+          <AddButton onClick={onClickAdd}>상품 등록</AddButton>
           <Input>
             <input type="text" name="search" value="" />
             <Image
