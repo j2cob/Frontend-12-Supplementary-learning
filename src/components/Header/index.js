@@ -6,12 +6,15 @@ export default function Header() {
   return (
     <div>
       <Top>
-        <Image
-          src="/images/image-logo.png"
-          alt="logo"
-          width={182}
-          height={49}
-        />
+        <Link href="/">
+          <Image
+            src="/images/image-logo.png"
+            alt="logo"
+            width={182}
+            height={49}
+          />
+        </Link>
+
         <div>
           <Link href="/login">로그인</Link>
           <Link href="/signup">회원가입</Link>
@@ -40,6 +43,8 @@ const Top = styled.div({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  maxWidth: 1920,
+  margin: "0 auto",
   a: {
     margin: "0 28px",
     fontSize: 14,

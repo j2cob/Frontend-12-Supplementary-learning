@@ -36,6 +36,9 @@ const Container = styled.div({
   padding: "53px  107px",
   backgroundColor: "#F1F1F1  ",
   borderTop: "1px solid #555555",
+  position: "absolute",
+  bottom: 0,
+  width: "100%",
   p: {
     fontSize: 14,
     letterSpacing: "-0.5px",
@@ -44,4 +47,6 @@ const Container = styled.div({
 });
 const Inner = styled.div({
   padding: "0 20px",
+  maxWidth: 1920,
+  margin: "0 auto",
 });
