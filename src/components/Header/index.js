@@ -17,7 +17,7 @@ export default function Header() {
 
         <div>
           <Link href="/login">로그인</Link>
-          <Link href="/signup">회원가입</Link>
+          <Link href="/join">회원가입</Link>
           <Link href="/cart">
             장바구니<Badge>0</Badge>
           </Link>
