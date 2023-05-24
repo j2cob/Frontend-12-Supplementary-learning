@@ -1,5 +1,3 @@
-import Footer from "@/src/components/Footer";
-import Header from "@/src/components/Header";
 import styled from "@emotion/styled";
 import { useState } from "react";
 
@@ -15,7 +13,6 @@ export default function Join() {
 
   return (
     <>
-      <Header />
       <Title>JOIN MEMBER</Title>
       <Inner>
         <Form>
@@ -65,7 +62,6 @@ export default function Join() {
         <Button onClick={onClickLogin}>취소</Button>
         <ButtonDark onClick={onClickLogin}>확인</ButtonDark>
       </ButtonContainer>
-      <Footer />
     </>
   );
 }

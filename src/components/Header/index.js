@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <div>
+    <Container>
       <Top>
         <Link href="/">
           <Image
@@ -34,10 +34,17 @@ export default function Header() {
           <Link href="/event">EVENT</Link>
         </Inner>
       </Nav>
-    </div>
+    </Container>
   );
 }
 
+const Container = styled.div({
+  position: "fixed",
+  top: 0,
+  width: "100%",
+  zIndex: 999,
+  background: "#fff",
+});
 const Top = styled.div({
   padding: "26px 76px",
   display: "flex",

@@ -1,5 +1,3 @@
-import Footer from "@/src/components/Footer";
-import Header from "@/src/components/Header";
 import styled from "@emotion/styled";
 import { useState } from "react";
 
@@ -12,7 +10,6 @@ export default function Login() {
   };
   return (
     <>
-      <Header />
       <Title>LOGIN</Title>
       <FormContainer>
         <Form>
@@ -39,7 +36,6 @@ export default function Login() {
         </Form>
         <Button onClick={onClickLogin}>로그인</Button>
       </FormContainer>
-      <Footer />
     </>
   );
 }

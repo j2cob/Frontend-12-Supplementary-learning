@@ -36,7 +36,7 @@ const Container = styled.div({
   padding: "53px  107px",
   backgroundColor: "#F1F1F1  ",
   borderTop: "1px solid #555555",
-  position: "absolute",
+  position: "fixed",
   bottom: 0,
   width: "100%",
   p: {
