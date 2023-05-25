@@ -17,7 +17,12 @@ export default function Item({ item }) {
         alt="image"
       />
       <LikeButton>
-        <Image src="/images/icon-like.png" width={21} height={18} alt="image" />
+        <Image
+          src={`http://backend-practice.codebootcamp.co.kr/${item?.images[0]}`}
+          width={21}
+          height={18}
+          alt="image"
+        />
       </LikeButton>
       <Inner>
         <Row>
@@ -25,13 +30,13 @@ export default function Item({ item }) {
           <ItemPrice>{item?.price}</ItemPrice>
         </Row>
         <ItemName>{item?.name}</ItemName>
-        <ItemDescription>{item?.description}</ItemDescription>
+        <ItemDescription>{item?.contents}</ItemDescription>
       </Inner>
     </Container>
   );
 }
 
-const Container = styled.button({
+const Container = styled.div({
   width: "calc((100% - 348px )/4)",
   position: "relative",
   marginBottom: 50,

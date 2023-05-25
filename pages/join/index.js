@@ -1,14 +1,30 @@
+import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { CREATE_USER } from "../api/createUser";
 
 export default function Join() {
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [name, setName] = useState("");
 
+  const onCompletedCreateUser = (data) => {
+    alert("회원가입이 완료됬습니다.");
+  };
+
+  const [createUser, {}] = useMutation(CREATE_USER, {
+    onCompleted: onCompletedCreateUser,
+  });
+
   const onClickLogin = () => {
-    //
+    createUser({
+      variables: {
+        email,
+        password,
+        name,
+      },
+    });
   };
 
   return (
@@ -20,10 +36,10 @@ export default function Join() {
             <Label>아이디</Label>
             <input
               type="text"
-              name="id"
-              value={id}
+              name="email"
+              value={email}
               placeholder="이메일 아이디를 @까지 정확하게 입력하세요"
-              onChange={(e) => setId(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Row>
           <Row>
@@ -50,7 +66,7 @@ export default function Join() {
             <Label>이름</Label>
             <input
               type="text"
-              name="id"
+              name="name"
               value={name}
               placeholder="ex) 홍길동"
               onChange={(e) => setName(e.target.value)}
@@ -101,6 +117,7 @@ const Label = styled.p({
 });
 const ButtonContainer = styled.div({
   marginTop: 68,
+  marginBottom: 100,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

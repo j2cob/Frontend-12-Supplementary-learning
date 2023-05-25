@@ -1,7 +1,9 @@
 import Item from "@/src/components/Item";
+import { useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { FETCH_BOARDS } from "../api/fetchBoards";
 
 const list = [
   {
@@ -31,6 +33,14 @@ export default function Brand() {
   const onClickAdd = () => {
     router.push("/add");
   };
+
+  const onCompletedFetchBoard = (data) => {
+    console.log(data);
+  };
+  useQuery(FETCH_BOARDS, {
+    onCompleted: onCompletedFetchBoard,
+  });
+
   return (
     <Container>
       <BestList>

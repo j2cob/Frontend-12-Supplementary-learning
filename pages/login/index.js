@@ -1,13 +1,38 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { LOGIN_USER } from "../api/loginUser";
+import { useMutation } from "@apollo/client";
+import { useRouter } from "next/router";
 
 export default function Login() {
-  const [id, setId] = useState("");
+  const router = useRouter();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onClickLogin = () => {
-    //
+  const onCompletedCreateUser = (data) => {
+    console.log(data?.loginUser?.accessToken);
+
+    const user = {
+      isLogged: true,
+      token: data?.loginUser.accessToken,
+    };
+    localStorage.setItem("codebootcamp", JSON.stringify(user));
+    router.replace("/");
   };
+
+  const [loginUser, {}] = useMutation(LOGIN_USER, {
+    onCompleted: onCompletedCreateUser,
+    onError: (error) => {
+      alert(error.message);
+    },
+  });
+
+  const onClickLogin = () => {
+    loginUser({
+      variables: { email, password },
+    });
+  };
+
   return (
     <>
       <Title>LOGIN</Title>
@@ -17,10 +42,10 @@ export default function Login() {
             <Label>아이디</Label>
             <input
               type="text"
-              name="id"
-              value={id}
+              name="email"
+              value={email}
               placeholder="이메일 아이디를 @까지 정확하게 입력하세요"
-              onChange={(e) => setId(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Row>
           <Row>

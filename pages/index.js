@@ -1,34 +1,20 @@
-import Footer from "@/src/components/Footer";
-import Header from "@/src/components/Header";
 import Item from "@/src/components/Item";
 import styled from "@emotion/styled";
+import { useQuery } from "@apollo/client";
+import { FETCH_USED_ITEMS } from "./api/fetchUsedItems";
+import { useState } from "react";
 
-const list = [
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-];
 export default function Home() {
+  const [list, setList] = useState([]);
+  const onCompletedFetchBoard = (data) => {
+    setList(data.fetchUseditems);
+  };
+  useQuery(FETCH_USED_ITEMS, {
+    onCompleted: onCompletedFetchBoard,
+  });
+
   return (
     <>
-      <Header />
       <swiper-container>
         <swiper-slide>
           <Slider>Slide 1</Slider>
@@ -51,7 +37,6 @@ export default function Home() {
           <Item key={index} item={item} />
         ))}
       </List>
-      <Footer />
     </>
   );
 }

@@ -1,20 +1,23 @@
-import Footer from "@/src/components/Footer";
-import Header from "@/src/components/Header";
-import "@/styles/globals.css";
+import "../styles/globals.css";
+import { ApolloProvider } from "@apollo/client";
 import styled from "@emotion/styled";
+import client from "../apollo";
+import Header from "@/src/components/Header";
+import Footer from "@/src/components/Footer";
 
 export default function App({ Component, pageProps }) {
   return (
-    <Container>
-      <Header />
-      <Component {...pageProps} />
-      <Footer />
-    </Container>
+    <ApolloProvider client={client}>
+      <Container>
+        <Header />
+        <Component {...pageProps} />
+        <Footer />
+      </Container>
+    </ApolloProvider>
   );
 }
 
 const Container = styled.div({
   minHeight: "100vh",
-  paddingBottom: 358,
   paddingTop: 216,
 });

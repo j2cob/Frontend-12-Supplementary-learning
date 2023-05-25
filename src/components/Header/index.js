@@ -2,7 +2,8 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Header() {
+export default function Header({ user }) {
+  // console.log(user);
   return (
     <Container>
       <Top>
@@ -17,7 +18,7 @@ export default function Header() {
 
         <div>
           <Link href="/login">로그인</Link>
-          <Link href="/join">회원가입</Link>
+          <Link href="/join">{user ? "로그아웃" : "회원가입"}</Link>
           <Link href="/cart">
             장바구니<Badge>0</Badge>
           </Link>
