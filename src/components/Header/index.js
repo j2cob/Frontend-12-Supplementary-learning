@@ -1,11 +1,11 @@
-import { authState } from "@/pages/atom";
+import { accessTokenState } from "@/pages/atom";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import Link from "next/link";
 import { useRecoilValue } from "recoil";
 
 export default function Header({ user }) {
-  const accessTokenState = useRecoilValue(authState);
+  const accessTokenState = useRecoilValue(accessTokenState);
   console.log(accessTokenState);
   return (
     <Container>

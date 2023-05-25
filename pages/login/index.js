@@ -13,12 +13,8 @@ export default function Login() {
   const [token, setUser] = useRecoilState(authState);
 
   const onCompletedCreateUser = (data) => {
-    const user = {
-      isLogged: true,
-      token: data?.loginUser.accessToken,
-    };
-    setUser(user);
-    localStorage.setItem("codebootcamp", JSON.stringify(user));
+    setUser(data?.loginUser.accessToken);
+    localStorage.setItem("accessToken", data?.loginUser.accessToken);
     router.replace("/");
   };
 

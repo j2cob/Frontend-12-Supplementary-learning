@@ -1,73 +1,107 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
-import Input from "@/src/components/Input";
 import { useForm } from "react-hook-form";
 import ImageUpload from "@/src/components/ImageUpload";
+import { useMutation } from "@apollo/client";
+import { CREATE_USED_ITEM } from "../graphql/createUsedItem";
+import { useRouter } from "next/router";
 
 const ReactQuill = dynamic(async () => await import("react-quill"), {
   ssr: false,
 });
 export default function Add() {
-  const fileRef = useRef(null);
-  const [name, setName] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const { register } = useForm({
+  const router = useRouter();
+
+  const onCompletedCreateUsedItem = () => {
+    //
+  };
+  const [createUsedItem] = useMutation(CREATE_USED_ITEM, {
+    onCompleted: onCompletedCreateUsedItem,
+  });
+  const { register, handleSubmit, setValue, trigger } = useForm({
     mode: "onChange",
   });
-  const [price, setPrice] = useState([""]);
-  const [tags, setTags] = useState([""]);
   const [images, setImages] = useState([]);
 
   const onClickCancel = () => {
-    //
+    router.back();
   };
 
-  const onClickConfirm = () => {
-    //
+  const onClickSubmit = async (data) => {
+    console.log(data);
+    const { name, remarks, contents, price, tags } = data;
+    if (!(name && remarks && contents && price && tags)) {
+      alert("필수 입력 사항입니다.");
+      return;
+    }
+    createUsedItem({
+      variables: {
+        createUseditemInput: {
+          name,
+          remarks,
+          contents,
+          price: Number(price),
+          tags,
+          images,
+        },
+      },
+    });
+  };
+
+  const onChangeContents = (value) => {
+    setValue("contents", value === "<p><br></p>" ? "" : value);
+    trigger("contents");
   };
 
   return (
     <Container>
       <Title>상품 등록</Title>
       <Form>
-        <Input
-          value={name}
-          label="상품명"
-          placeholder="상품명을 작성해주세요"
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Input
-          value={remarks}
-          label="상품 요약"
-          placeholder="상품 요약을 작성해주세요"
-          onChange={(e) => setRemarks(e.target.value)}
-        />
+        <Row>
+          <Label>상품명</Label>
+          <input
+            type="text"
+            placeholder="상품명을 작성해주세요"
+            {...register("name")}
+          />
+        </Row>
+        <Row>
+          <Label>상품 요약</Label>
+          <input
+            type="text"
+            placeholder="상품 요약을 작성해주세요"
+            {...register("remarks")}
+          />
+        </Row>
 
         <Row>
           <Label>상품 내용</Label>
           <Textarea>
             <ReactQuill
-              // value={contents}
               placeholder="상품을 설명해주세요."
-              // onChange={(e) => setContents(value)}
+              onChange={onChangeContents}
             />
           </Textarea>
         </Row>
-        <Input
-          value={price}
-          label="판매 가격"
-          placeholder="판매 가격을 입력해주세요"
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <Input
-          value={tags}
-          label="태그 입력"
-          placeholder="#태그 #태그 #태그"
-          onChange={(e) => setTags(e.target.value)}
-        />
+        <Row>
+          <Label>판매 가격</Label>
+          <input
+            type="text"
+            placeholder="판매 가격을 작성해주세요"
+            {...register("price")}
+          />
+        </Row>
+        <Row>
+          <Label>태그 입력</Label>
+          <input
+            type="text"
+            placeholder="#태그 #태그 #태그"
+            {...register("tags")}
+          />
+        </Row>
 
         <div>
           <Label>브랜드 위치</Label>
@@ -83,24 +117,12 @@ export default function Add() {
               <CodeInput
                 placeholder="07250"
                 type="text"
-                name="price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                {...register("address")}
               />
               <CodeButton>우편번호 검색</CodeButton>
               <InputWrap>
-                <input
-                  type="text"
-                  name="price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-                <input
-                  type="text"
-                  name="price"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
+                <input type="text" />
+                <input type="text" />
               </InputWrap>
             </div>
           </MapRow>
@@ -109,7 +131,9 @@ export default function Add() {
       </Form>
       <ButtonContainer>
         <Button onClick={onClickCancel}>취소</Button>
-        <ButtonDark onClick={onClickConfirm}>등록</ButtonDark>
+        <ButtonDark type="submit" onClick={handleSubmit(onClickSubmit)}>
+          등록
+        </ButtonDark>
       </ButtonContainer>
     </Container>
   );
@@ -181,12 +205,16 @@ const Form = styled.div({
       color: "#A9A9A9      ",
     },
   },
-  textarea: {
+});
+const Textarea = styled.div({
+  position: "relative",
+  width: "100%",
+  height: 430,
+  ".quill": {
+    background: "#fff",
+    height: "100%",
     marginRight: 10,
     width: "100%",
-    background: "#fff",
-    border: "1 solid #BDBDBD",
-    padding: "18px",
     fontSize: 15,
     marginTop: -7,
     resize: "none",
@@ -194,12 +222,9 @@ const Form = styled.div({
       color: "#BDBDBD      ",
     },
   },
-});
-const Textarea = styled.div({
-  position: "relative",
-  img: {
-    width: "100%",
-    height: "auto",
+  ".ql-container": {
+    height: 390,
+    border: "1px solid #BDBDBD",
   },
 });
 const Label = styled.p({

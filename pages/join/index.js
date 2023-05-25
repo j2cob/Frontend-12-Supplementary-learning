@@ -20,9 +20,11 @@ export default function Join() {
   const onClickLogin = () => {
     createUser({
       variables: {
-        email,
-        password,
-        name,
+        createUserInput: {
+          email,
+          password,
+          name,
+        },
       },
     });
   };

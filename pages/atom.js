@@ -1,9 +1,11 @@
 import { atom } from "recoil";
 
-export const authState = atom({
-  key: "authState", // 전역적으로 고유한 값
-  default: {
-    isLogged: false,
-    token: null,
-  }, // 초깃값
+export const accessTokenState = atom({
+  key: "accessTokenState", // 전역적으로 고유한 값
+  token: null,
+});
+
+export const userInfoState = atom({
+  key: "userInfoState", // 전역적으로 고유한 값
+  userInfo: null,
 });
