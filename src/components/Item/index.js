@@ -7,18 +7,18 @@ export default function Item({ item }) {
   return (
     <Container
       onClick={() => {
-        router.push(`/brand/${0}`);
+        router.push(`/brand/${item._id}`);
       }}
     >
       <Image
-        src="http://placehold.it/600x400"
+        src={`http://backend-practice.codebootcamp.co.kr/graphql/${item?.images[0]}`}
         width={348}
         height={466}
         alt="image"
       />
       <LikeButton>
         <Image
-          src={`http://backend-practice.codebootcamp.co.kr/${item?.images[0]}`}
+          src={"/images/icon-like.png"}
           width={21}
           height={18}
           alt="image"
@@ -26,11 +26,11 @@ export default function Item({ item }) {
       </LikeButton>
       <Inner>
         <Row>
-          <ItemTitle>대표 태그</ItemTitle>
+          <ItemTitle>{item?.tags[0]}</ItemTitle>
           <ItemPrice>{item?.price}</ItemPrice>
         </Row>
-        <ItemName>{item?.name}</ItemName>
-        <ItemDescription>{item?.contents}</ItemDescription>
+        <ItemName>{item?.seller?.name}</ItemName>
+        <ItemDescription>{item?.remarks}</ItemDescription>
       </Inner>
     </Container>
   );

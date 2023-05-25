@@ -28,12 +28,12 @@ export default function Home() {
       </swiper-container>
       <Title>New Arrival</Title>
       <List>
-        {list.map((item, index) => (
+        {list.slice(0, 4).map((item, index) => (
           <Item key={index} item={item} />
         ))}
       </List>
       <List>
-        {list.map((item, index) => (
+        {list.slice(4, 8).map((item, index) => (
           <Item key={index} item={item} />
         ))}
       </List>

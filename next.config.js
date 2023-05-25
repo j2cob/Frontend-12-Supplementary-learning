@@ -11,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: "http",
-        hostname: "backend-practice.codebootcamp.co.kr/",
+        hostname: "backend-practice.codebootcamp.co.kr",
         port: "",
         pathname: "/**",
       },
