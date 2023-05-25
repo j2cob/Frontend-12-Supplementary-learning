@@ -1,14 +1,16 @@
+import { images } from "@/next.config";
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Add() {
+  const fileRef = useRef(null);
   const [name, setName] = useState("");
   const [remarks, setRemarks] = useState("");
   const [contents, setContents] = useState("");
   const [price, setPrice] = useState([""]);
   const [tags, setTags] = useState([""]);
-  const [images, setImages] = useState([""]);
+  const [images, setImages] = useState([]);
 
   const onClickCancel = () => {
     //
@@ -17,6 +19,31 @@ export default function Add() {
   const onClickConfirm = () => {
     //
   };
+
+  const onClickUploadAdd = () => {
+    if (fileRef.current) {
+      fileRef.current?.click();
+    }
+  };
+
+  const onClickDeleteImage = (index) => {
+    const newImages = [...images].filter((e, i) => i !== index);
+    setImages(newImages);
+  };
+
+  const onChangeFile = (fileBlob) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(fileBlob);
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        const newImages = [...images];
+        newImages.push(reader.result);
+        setImages(newImages);
+        resolve();
+      };
+    });
+  };
+
   return (
     <Container>
       <Title>상품 등록</Title>
@@ -79,44 +106,92 @@ export default function Add() {
             onChange={(e) => setTags(e.target.value)}
           />
         </Row>
-        <Row>
+        <div>
           <Label>브랜드 위치</Label>
-          <div style={{ width: "100%" }}>
-            <CodeInput
-              placeholder="07250"
-              type="text"
-              name="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            <CodeButton>우편번호 검색</CodeButton>
-            <InputWrap>
-              <input
-                type="text"
-                name="price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-              <input
-                type="text"
-                name="price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </InputWrap>
-          </div>
-        </Row>
-        <Row>
-          <Label>사진 첨부</Label>
-          <UploadInput>
-            <input type="file" class="real-upload" accept="image/*" />
+          <MapRow>
             <Image
-              src="/images/icon-add.png"
-              width={14}
-              height={13}
+              className="icon"
+              src="/images/image-map.png"
+              width={384}
+              height={252}
               alt="image"
             />
-          </UploadInput>
+            <div style={{ width: "100%", marginLeft: 26 }}>
+              <CodeInput
+                placeholder="07250"
+                type="text"
+                name="price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <CodeButton>우편번호 검색</CodeButton>
+              <InputWrap>
+                <input
+                  type="text"
+                  name="price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+                <input
+                  type="text"
+                  name="price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </InputWrap>
+            </div>
+          </MapRow>
+        </div>
+        <Row style={{ borderWidth: 3 }}>
+          <div>
+            <Label>사진 첨부</Label>
+
+            <ImageRow>
+              {images.map((image, index) => (
+                <PreviewBox key={index}>
+                  {image && (
+                    <>
+                      <button onClick={() => onClickDeleteImage(index)}>
+                        <Image
+                          className="icon"
+                          src="/images/icon-delete.png"
+                          width={14}
+                          height={13}
+                          alt="image"
+                        />
+                      </button>
+                      <div className="preview">
+                        <Image
+                          width={14}
+                          height={13}
+                          className="preview-image"
+                          src={image}
+                          alt="preview-img"
+                        />
+                      </div>
+                    </>
+                  )}
+                </PreviewBox>
+              ))}
+              <UploadInput onClick={onClickUploadAdd}>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    onChangeFile(e.target.files[0]);
+                  }}
+                />
+                <Image
+                  className="icon"
+                  src="/images/icon-add.png"
+                  width={14}
+                  height={13}
+                  alt="image"
+                />
+              </UploadInput>
+            </ImageRow>
+          </div>
         </Row>
       </Form>
       <ButtonContainer>
@@ -143,6 +218,14 @@ const InputWrap = styled.div({
   input: {
     marginBottom: 24,
   },
+});
+const MapRow = styled.div({
+  paddingBottom: 26,
+  marginBottom: 26,
+  marginTop: 38,
+  display: "flex",
+  alignItems: "center",
+  borderBottom: "1px solid #999999",
 });
 const Row = styled.div({
   display: "flex",
@@ -171,23 +254,57 @@ const CodeInput = styled.input({
     padding: 16,
   },
 });
-const UploadInput = styled.div({
+const PreviewBox = styled.div({
   "&&": {
+    marginRight: 24,
     width: 180,
     height: 180,
-    opacity: 0.6,
-    background: "#BDBDBD",
     position: "relative",
-    img: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      margin: "0 -12px -12px",
+    overflow: "hidden",
+    ".preview-image": {
+      width: "100%",
+      height: "100%",
     },
-    input: {
-      background: "transparent",
+    button: {
+      backgroundColor: "transparent",
+      border: 0,
+      position: "absolute",
+      top: 13,
+      right: 13,
+      cursor: "pointer",
     },
   },
+});
+const UploadInput = styled.button({
+  width: 180,
+  height: 180,
+  background: "#BDBDBD",
+  position: "relative",
+  overflow: "hidden",
+  cursor: "pointer",
+  border: 0,
+  ".icon": {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    margin: "0 -12px -12px",
+  },
+  input: {
+    background: "transparent",
+    position: "absolute",
+    width: "1px",
+    height: "1px",
+    padding: "0",
+    margin: -"1px",
+    overflow: "hidden",
+    clip: "rect(0,0,0,0)",
+    border: 0,
+  },
+});
+const ImageRow = styled.div({
+  display: "flex",
+  alignItems: "center",
+  margin: "50px 0",
 });
 const Form = styled.div({
   margin: "41px 0 39px",
@@ -258,4 +375,5 @@ const ButtonDark = styled.button({
   fontSize: 20,
   fontWeight: 700,
   opacity: 0.6,
+  border: 0,
 });
