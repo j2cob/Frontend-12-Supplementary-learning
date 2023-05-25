@@ -50,7 +50,7 @@ const Container = styled.div({
   "& + &": {
     marginLeft: "116px",
   },
-  "&:nth-child(4n+1)": {
+  "&:nth-of-type(4n+1)": {
     marginLeft: 0,
   },
   img: {

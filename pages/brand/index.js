@@ -27,7 +27,7 @@ export default function Brand() {
   useQuery(FETCH_USED_ITEMS_OF_THE_BEST, {
     onCompleted: onCompletedFetchUsedItemsOfTheBest,
   });
-  const { data, refetch } = useQuery(FETCH_USED_ITEMS, {
+  const { data, fetchMore } = useQuery(FETCH_USED_ITEMS, {
     onCompleted: onCompletedFetchUsedItems,
     variables: {
       page,
@@ -40,6 +40,25 @@ export default function Brand() {
 
   const onLoadMore = () => {
     if (data === undefined) return;
+    fetchMore({
+      variables: {
+        page: Math.ceil((data?.fetchUseditems.length ?? 10) / 10) + 1,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (fetchMoreResult.fetchUseditems === undefined) {
+          return {
+            fetchUseditems: [...prev.fetchUseditems],
+          };
+        }
+
+        return {
+          fetchUseditems: [
+            ...prev.fetchUseditems,
+            ...fetchMoreResult.fetchUseditems,
+          ],
+        };
+      },
+    });
   };
 
   return (
@@ -66,7 +85,7 @@ export default function Brand() {
       </MiddleRow>
 
       <List pageStart={0} loadMore={onLoadMore} hasMore={true}>
-        {list.map((item, index) => (
+        {data?.fetchUseditems.map((item, index) => (
           <Item key={item._id} item={item} />
         ))}
       </List>
