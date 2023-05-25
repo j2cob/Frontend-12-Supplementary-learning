@@ -37,23 +37,32 @@ export default function Item({ item }) {
     </Container>
   );
 }
-const ThumbnailImage = styled.div({
-  height: 466,
-  overflow: "hidden",
-  background: "#ddd",
-  img: {
-    // width: "100% ",
-    // height: "auto",
-  },
-});
+
 const Container = styled.div({
-  maxWidth: "calc((100% - 348px )/4)",
+  width: "calc((100% - 348px)/4)",
+  float: "left",
   position: "relative",
   marginBottom: 50,
   border: 0,
   background: "transparent",
   textAlign: "left",
   cursor: "pointer",
+  "& + &": {
+    marginLeft: "116px",
+  },
+  "&:nth-child(4n+1)": {
+    marginLeft: 0,
+  },
+  img: {
+    width: "100% ",
+    objectFit: "cover",
+  },
+});
+const ThumbnailImage = styled.div({
+  height: 466,
+  width: "100%",
+  overflow: "hidden",
+  background: "#ddd",
   img: {
     width: "100% ",
   },

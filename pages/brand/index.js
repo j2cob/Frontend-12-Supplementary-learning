@@ -5,33 +5,53 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FETCH_USED_ITEMS_OF_THE_BEST } from "../graphql/fetchUseditemsOfTheBest";
+import useAuth from "@/src/hooks/useAuth";
+import { FETCH_USED_ITEMS } from "../graphql/fetchUsedItems";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function Brand() {
+  useAuth();
   const router = useRouter();
   const [list, setList] = useState([]);
+  const [page, setPage] = useState(1);
   const [bestList, setBestList] = useState([]);
 
   const onCompletedFetchUsedItemsOfTheBest = (data) => {
     setBestList(data.fetchUseditemsOfTheBest);
   };
 
+  const onCompletedFetchUsedItems = (data) => {
+    setList(data.fetchUseditems);
+  };
+
   useQuery(FETCH_USED_ITEMS_OF_THE_BEST, {
     onCompleted: onCompletedFetchUsedItemsOfTheBest,
   });
+  const { data, refetch } = useQuery(FETCH_USED_ITEMS, {
+    onCompleted: onCompletedFetchUsedItems,
+    variables: {
+      page,
+    },
+  });
+
   const onClickAdd = () => {
     router.push("/add");
   };
 
+  const onLoadMore = () => {
+    if (data === undefined) return;
+  };
+
   return (
     <Container>
-      <BestList>
+      <Best>
         <Title>BEST</Title>
-        <ItemRow>
+        <BestList>
           {bestList.map((item, index) => (
             <Item key={item._id} item={item} />
           ))}
-        </ItemRow>
-      </BestList>
+        </BestList>
+      </Best>
       <MiddleRow>
         <AddButton onClick={onClickAdd}>상품 등록</AddButton>
         <Input>
@@ -45,12 +65,7 @@ export default function Brand() {
         </Input>
       </MiddleRow>
 
-      <List>
-        {list.map((item, index) => (
-          <Item key={item._id} item={item} />
-        ))}
-      </List>
-      <List>
+      <List pageStart={0} loadMore={onLoadMore} hasMore={true}>
         {list.map((item, index) => (
           <Item key={item._id} item={item} />
         ))}
@@ -79,7 +94,7 @@ const Title = styled.p({
   textAlign: "center",
   marginBottom: 86,
 });
-const BestList = styled.div({
+const Best = styled.div({
   background: "#fff",
   paddingTop: 43,
   margin: "0 50px 37px",
@@ -108,16 +123,14 @@ const Input = styled.div({
     bottom: 10,
   },
 });
-const ItemRow = styled.div({
-  display: "flex",
-  justifyContent: "space-between",
+const BestList = styled.div({
+  overflow: "hidden",
   padding: "0 90px",
   maxWidth: 1920,
   margin: "0 auto",
 });
-const List = styled.div({
-  display: "flex",
-  justifyContent: "space-between",
+const List = styled(InfiniteScroll)({
+  overflow: "hidden",
   padding: "0 90px",
   maxWidth: 1920,
   margin: "0 auto",

@@ -3,19 +3,21 @@ import { useState } from "react";
 import { LOGIN_USER } from "../graphql/loginUser";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { authState } from "../atom";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setUser] = useRecoilState(authState);
 
   const onCompletedCreateUser = (data) => {
-    console.log(data?.loginUser?.accessToken);
-
     const user = {
       isLogged: true,
       token: data?.loginUser.accessToken,
     };
+    setUser(user);
     localStorage.setItem("codebootcamp", JSON.stringify(user));
     router.replace("/");
   };

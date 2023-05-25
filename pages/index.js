@@ -11,6 +11,7 @@ export default function Home() {
     setList(data.fetchUseditems);
   };
   useQuery(FETCH_USED_ITEMS, {
+    variables: { page: 1 },
     onCompleted: onCompletedFetchBoard,
   });
   const settings = {
@@ -41,12 +42,7 @@ export default function Home() {
       </Slider>
       <Title>New Arrival</Title>
       <List>
-        {list.slice(0, 4).map((item, index) => (
-          <Item key={item._id} item={item} />
-        ))}
-      </List>
-      <List>
-        {list.slice(4, 8).map((item, index) => (
+        {list.slice(0, 8).map((item, index) => (
           <Item key={item._id} item={item} />
         ))}
       </List>
@@ -69,8 +65,7 @@ const Title = styled.p({
   textAlign: "center",
 });
 const List = styled.div({
-  display: "flex",
-  justifyContent: "space-between",
+  overflow: "hidden",
   padding: "0 90px",
   maxWidth: 1920,
   margin: "0 auto",

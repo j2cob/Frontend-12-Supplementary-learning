@@ -4,16 +4,19 @@ import styled from "@emotion/styled";
 import client from "../apollo";
 import Header from "@/src/components/Header";
 import Footer from "@/src/components/Footer";
+import { RecoilRoot } from "recoil";
 
 export default function App({ Component, pageProps }) {
   return (
-    <ApolloProvider client={client}>
-      <Container>
-        <Header />
-        <Component {...pageProps} />
-        <Footer />
-      </Container>
-    </ApolloProvider>
+    <RecoilRoot>
+      <ApolloProvider client={client}>
+        <Container>
+          <Header />
+          <Component {...pageProps} />
+          <Footer />
+        </Container>
+      </ApolloProvider>
+    </RecoilRoot>
   );
 }
 
