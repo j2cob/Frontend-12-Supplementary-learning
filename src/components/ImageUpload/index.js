@@ -1,6 +1,30 @@
+import { UPLOAD_FILE } from "@/pages/graphql/uploadFile";
+import { useMutation } from "@apollo/client";
+import styled from "@emotion/styled";
 import Image from "next/image";
+import { useRef } from "react";
 
-export default function ImageUpload() {
+export default function ImageUpload({ images, setImages }) {
+  const fileRef = useRef(null);
+  const onClickUploadAdd = () => {
+    if (fileRef.current) {
+      fileRef.current?.click();
+    }
+  };
+
+  const onClickDeleteImage = (index) => {
+    const newImages = [...images].filter((e, i) => i !== index);
+    setImages(newImages);
+  };
+  const [uploadFile] = useMutation(UPLOAD_FILE);
+
+  const onChangeFile = async (file) => {
+    const result = await uploadFile({ variables: { file } });
+    const newImages = [...images];
+    newImages.push(result.data?.uploadFile.url ?? "");
+    setImages(newImages);
+  };
+
   return (
     <Row style={{ borderWidth: 3 }}>
       <div>
@@ -25,7 +49,7 @@ export default function ImageUpload() {
                       width={14}
                       height={13}
                       className="preview-image"
-                      src={image}
+                      src={`https://storage.googleapis.com/${image}`}
                       alt="preview-img"
                     />
                   </div>

@@ -5,12 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FETCH_USED_ITEMS_OF_THE_BEST } from "../graphql/fetchUseditemsOfTheBest";
-import useAuth from "@/src/hooks/useAuth";
 import { FETCH_USED_ITEMS } from "../graphql/fetchUsedItems";
 import InfiniteScroll from "react-infinite-scroller";
+import { withAuth } from "@/src/hooks/withAuth";
 
-export default function Brand() {
-  useAuth();
+function Brand() {
   const router = useRouter();
   const [list, setList] = useState([]);
   const [page, setPage] = useState(1);
@@ -92,6 +91,8 @@ export default function Brand() {
     </Container>
   );
 }
+
+export default withAuth(Brand);
 
 const Container = styled.div({
   background: "#f5f5f5",
