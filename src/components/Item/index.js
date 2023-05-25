@@ -10,12 +10,14 @@ export default function Item({ item }) {
         router.push(`/brand/${item._id}`);
       }}
     >
-      <Image
-        src={`http://backend-practice.codebootcamp.co.kr/graphql/${item?.images[0]}`}
-        width={348}
-        height={466}
-        alt="image"
-      />
+      <ThumbnailImage>
+        <Image
+          src={`https://storage.googleapis.com/${item?.images[0]}`}
+          width={348}
+          height={466}
+          alt="image"
+        />
+      </ThumbnailImage>
       <LikeButton>
         <Image
           src={"/images/icon-like.png"}
@@ -26,7 +28,7 @@ export default function Item({ item }) {
       </LikeButton>
       <Inner>
         <Row>
-          <ItemTitle>{item?.tags[0]}</ItemTitle>
+          <ItemTags>{item?.tags[0]}</ItemTags>
           <ItemPrice>{item?.price}</ItemPrice>
         </Row>
         <ItemName>{item?.seller?.name}</ItemName>
@@ -35,9 +37,17 @@ export default function Item({ item }) {
     </Container>
   );
 }
-
+const ThumbnailImage = styled.div({
+  height: 466,
+  overflow: "hidden",
+  background: "#ddd",
+  img: {
+    // width: "100% ",
+    // height: "auto",
+  },
+});
 const Container = styled.div({
-  width: "calc((100% - 348px )/4)",
+  maxWidth: "calc((100% - 348px )/4)",
   position: "relative",
   marginBottom: 50,
   border: 0,
@@ -61,11 +71,13 @@ const Row = styled.div({
 const Inner = styled.div({
   padding: 20,
 });
-const ItemTitle = styled.p({
+const ItemTags = styled.p({
   color: "#F65656",
   fontSize: 20,
   fontWeight: 700,
   opacity: 0.6,
+  height: 30,
+  overflow: "hidden",
 });
 const ItemPrice = styled.p({
   marginLeft: 14,

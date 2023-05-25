@@ -37,6 +37,7 @@ const dummy = [
   },
 ];
 export default function Comment() {
+  // 3- section 15
   const [list, setList] = useState(dummy);
   return (
     <CommentContainer>

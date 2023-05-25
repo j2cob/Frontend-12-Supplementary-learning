@@ -3,51 +3,32 @@ import { useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FETCH_BOARDS } from "../api/fetchBoards";
-
-const list = [
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-  {
-    price: "27,500",
-    name: "조이조이",
-    description: "[당일출고/주문폭주] 노티드 캔버스 패브릭 가방 4col...",
-  },
-];
+import { useState } from "react";
+import { FETCH_USED_ITEMS_OF_THE_BEST } from "../graphql/fetchUseditemsOfTheBest";
 
 export default function Brand() {
   const router = useRouter();
+  const [list, setList] = useState([]);
+  const [bestList, setBestList] = useState([]);
+
+  const onCompletedFetchUsedItemsOfTheBest = (data) => {
+    setBestList(data.fetchUseditemsOfTheBest);
+  };
+
+  useQuery(FETCH_USED_ITEMS_OF_THE_BEST, {
+    onCompleted: onCompletedFetchUsedItemsOfTheBest,
+  });
   const onClickAdd = () => {
     router.push("/add");
   };
-
-  const onCompletedFetchBoard = (data) => {
-    console.log(data);
-  };
-  useQuery(FETCH_BOARDS, {
-    onCompleted: onCompletedFetchBoard,
-  });
 
   return (
     <Container>
       <BestList>
         <Title>BEST</Title>
         <ItemRow>
-          {list.map((item, index) => (
-            <Item key={index} item={item} />
+          {bestList.map((item, index) => (
+            <Item key={item._id} item={item} />
           ))}
         </ItemRow>
       </BestList>
@@ -66,12 +47,12 @@ export default function Brand() {
 
       <List>
         {list.map((item, index) => (
-          <Item key={index} item={item} />
+          <Item key={item._id} item={item} />
         ))}
       </List>
       <List>
         {list.map((item, index) => (
-          <Item key={index} item={item} />
+          <Item key={item._id} item={item} />
         ))}
       </List>
     </Container>

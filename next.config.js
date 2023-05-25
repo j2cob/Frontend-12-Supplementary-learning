@@ -10,8 +10,8 @@ const nextConfig = {
         pathname: "/**",
       },
       {
-        protocol: "http",
-        hostname: "backend-practice.codebootcamp.co.kr",
+        protocol: "https",
+        hostname: "storage.googleapis.com",
         port: "",
         pathname: "/**",
       },

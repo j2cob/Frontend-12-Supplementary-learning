@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { LOGIN_USER } from "../api/loginUser";
+import { LOGIN_USER } from "../graphql/loginUser";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 

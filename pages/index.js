@@ -1,8 +1,9 @@
 import Item from "@/src/components/Item";
 import styled from "@emotion/styled";
 import { useQuery } from "@apollo/client";
-import { FETCH_USED_ITEMS } from "./api/fetchUsedItems";
+import { FETCH_USED_ITEMS } from "./graphql/fetchUsedItems";
 import { useState } from "react";
+import Slider from "react-slick";
 
 export default function Home() {
   const [list, setList] = useState([]);
@@ -12,36 +13,48 @@ export default function Home() {
   useQuery(FETCH_USED_ITEMS, {
     onCompleted: onCompletedFetchBoard,
   });
-
+  const settings = {
+    dots: false,
+    infinite: false,
+  };
   return (
     <>
-      <swiper-container>
-        <swiper-slide>
-          <Slider>Slide 1</Slider>
-        </swiper-slide>
-        <swiper-slide>
-          <Slider>Slide 2</Slider>
-        </swiper-slide>
-        <swiper-slide>
-          <Slider>Slide 3</Slider>
-        </swiper-slide>
-      </swiper-container>
+      <Slider {...settings}>
+        <SliderContainer>
+          <h3> slider 1</h3>
+        </SliderContainer>
+        <SliderContainer>
+          <h3> slider 2</h3>
+        </SliderContainer>
+        <SliderContainer>
+          <h3> slider 3</h3>
+        </SliderContainer>
+        <SliderContainer>
+          <h3> slider 4</h3>
+        </SliderContainer>
+        <SliderContainer>
+          <h3> slider 5</h3>
+        </SliderContainer>
+        <SliderContainer>
+          <h3> slider 6</h3>
+        </SliderContainer>
+      </Slider>
       <Title>New Arrival</Title>
       <List>
         {list.slice(0, 4).map((item, index) => (
-          <Item key={index} item={item} />
+          <Item key={item._id} item={item} />
         ))}
       </List>
       <List>
         {list.slice(4, 8).map((item, index) => (
-          <Item key={index} item={item} />
+          <Item key={item._id} item={item} />
         ))}
       </List>
     </>
   );
 }
 
-const Slider = styled.div({
+const SliderContainer = styled.div({
   height: 750,
   background: "#ddd",
   fontSize: 30,

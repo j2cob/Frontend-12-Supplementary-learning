@@ -2,12 +2,21 @@ import { images } from "@/next.config";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRef, useState } from "react";
-
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+import Input from "@/src/components/Input";
+import { useMutation } from "@apollo/client";
+import { UPLOAD_FILE } from "../graphql/uploadFile";
+const ReactQuill = dynamic(async () => await import("react-quill"), {
+  ssr: false,
+});
 export default function Add() {
   const fileRef = useRef(null);
   const [name, setName] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [contents, setContents] = useState("");
+  const { register } = useForm({
+    mode: "onChange",
+  });
   const [price, setPrice] = useState([""]);
   const [tags, setTags] = useState([""]);
   const [images, setImages] = useState([]);
@@ -30,82 +39,58 @@ export default function Add() {
     const newImages = [...images].filter((e, i) => i !== index);
     setImages(newImages);
   };
+  //Section 19
 
-  const onChangeFile = (fileBlob) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(fileBlob);
-    return new Promise((resolve) => {
-      reader.onload = () => {
-        const newImages = [...images];
-        newImages.push(reader.result);
-        setImages(newImages);
-        resolve();
-      };
-    });
+  const [uploadFile] = useMutation(UPLOAD_FILE);
+
+  const onChangeFile = async (event) => {
+    const file = event.target.files?.[0];
+    const result = await uploadFile({ variables: { file } });
+    const newImages = [...images];
+    newImages.push(result.data?.uploadFile.url ?? "");
+    setImages(newImages);
   };
 
   return (
     <Container>
       <Title>상품 등록</Title>
       <Form>
-        <Row>
-          <Label>상품명</Label>
-          <input
-            type="text"
-            name="name"
-            value={name}
-            placeholder="상품명을 작성해주세요"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Row>
-        <Row>
-          <Label>상품 요약</Label>
-          <input
-            type="text"
-            name="remarks"
-            value={remarks}
-            placeholder="상품요약을 작성해주세요"
-            onChange={(e) => setRemarks(e.target.value)}
-          />
-        </Row>
+        <Input
+          value={name}
+          label="상품명"
+          placeholder="상품명을 작성해주세요"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Input
+          value={remarks}
+          label="상품 요약"
+          placeholder="상품 요약을 작성해주세요"
+          onChange={(e) => setRemarks(e.target.value)}
+        />
+
         <Row>
           <Label>상품 내용</Label>
           <Textarea>
-            <Image
-              src="/images/image-editor.png"
-              width={1920}
-              height={35}
-              alt="image"
-            />
-            <textarea
-              name="contents"
-              rows={10}
+            <ReactQuill
               value={contents}
               placeholder="상품을 설명해주세요."
-              onChange={(e) => setContents(e.target.value)}
+              onChange={(e) => setContents(value)}
             />
           </Textarea>
         </Row>
-        <Row>
-          <Label>판매 가격</Label>
-          <input
-            type="text"
-            name="price"
-            value={price}
-            placeholder="판매 가격을 입력해주세요"
-            onChange={(e) => setPrice(e.target.value)}
-          />
-        </Row>
-        <Row>
-          <Label>태그 입력</Label>
-          <input
-            type="text"
-            name="tags"
-            value={tags}
-            placeholder="#태그 #태그 #태그"
-            onChange={(e) => setTags(e.target.value)}
-          />
-        </Row>
+        <Input
+          value={price}
+          label="판매 가격"
+          placeholder="판매 가격을 입력해주세요"
+          onChange={(e) => setPrice(e.target.value)}
+        />
+        <Input
+          value={tags}
+          label="태그 입력"
+          placeholder="#태그 #태그 #태그"
+          onChange={(e) => setTags(e.target.value)}
+        />
+
         <div>
           <Label>브랜드 위치</Label>
           <MapRow>
