@@ -6,21 +6,17 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import DetailContent from "@/src/components/DetailContent";
 import { DELETE_USED_ITEM } from "@/src/graphql/deleteUsedItem";
-import { FETCH_USED_ITEM_QUESTION } from "@/src/graphql/fetchUsedItemQuestion";
-import Question from "@/src/components/Question";
+import { userInfoState } from "@/src/store/atom";
+import { useRecoilValue } from "recoil";
+import Questions from "@/src/components/Questions";
 
 export default function BrandDetail() {
   const router = useRouter();
   const [data, setData] = useState(null);
-  const [page, setPage] = useState(0);
-  const [questions, setQuestions] = useState(null);
+  const user = useRecoilValue(userInfoState);
 
   const onCompletedFetchUsedItem = (data) => {
     setData(data.fetchUseditem);
-  };
-
-  const onCompletedFetchUsedItemQuestion = (data) => {
-    setQuestions(data.fetchUseditemQuestions);
   };
 
   const onCompletedDeleteUsedItem = (data) => {
@@ -50,10 +46,6 @@ export default function BrandDetail() {
     },
     onCompleted: onCompletedFetchUsedItem,
   });
-  useQuery(FETCH_USED_ITEM_QUESTION, {
-    variables: { page, useditemId: router?.query?.id },
-    onCompleted: onCompletedFetchUsedItemQuestion,
-  });
 
   const islike = true;
   return (
@@ -71,24 +63,26 @@ export default function BrandDetail() {
         <Left>
           <Brand>AVANDRESS</Brand>
           <Name>{data?.name}</Name>
-          <EditButtonContainer>
-            <button onClick={onClickEdit}>
-              <Image
-                src="/images/icon-edit.png"
-                width={14}
-                height={14}
-                alt="image"
-              />
-            </button>
-            <button style={{ marginLeft: 20 }} onClick={onClickDelete}>
-              <Image
-                src="/images/icon-delete-light.png"
-                width={14}
-                height={14}
-                alt="image"
-              />
-            </button>
-          </EditButtonContainer>
+          {user?.email === data?.seller?.email && (
+            <EditButtonContainer>
+              <button onClick={onClickEdit}>
+                <Image
+                  src="/images/icon-edit.png"
+                  width={14}
+                  height={14}
+                  alt="image"
+                />
+              </button>
+              <button style={{ marginLeft: 20 }} onClick={onClickDelete}>
+                <Image
+                  src="/images/icon-delete-light.png"
+                  width={14}
+                  height={14}
+                  alt="image"
+                />
+              </button>
+            </EditButtonContainer>
+          )}
           <PriceContainer>
             <div>
               <span style={{ marginRight: 92 }}>판매가</span>
@@ -119,9 +113,11 @@ export default function BrandDetail() {
             </Row>
           </PriceContainer>
           <Content>{data?.remarks}</Content>
-          {data?.tags.map((tag, index) => (
-            <Tag key={index}>#{tag}</Tag>
-          ))}
+          <Row>
+            {data?.tags.map((tag, index) => (
+              <Tag key={index}>#{tag}</Tag>
+            ))}
+          </Row>
           <ButtonContainer>
             <ButtonDark>BUY NOW</ButtonDark>
             <Button>SHOPPING BAG</Button>
@@ -129,7 +125,9 @@ export default function BrandDetail() {
         </Left>
       </Row>
       <DetailContent contents={data?.contents} />
-      <Question questions={questions} />
+
+      {/* Questions */}
+      <Questions useditemId={router?.query?.id} user={user} />
     </Container>
   );
 }
@@ -194,7 +192,7 @@ const Content = styled.p({
 const Tag = styled.p({
   marginTop: 8,
   fontSize: 16,
-  paddingLeft: 22,
+  paddingLeft: 5,
   color: "#F65656",
 });
 const ButtonContainer = styled.div({

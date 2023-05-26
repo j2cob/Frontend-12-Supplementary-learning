@@ -19,10 +19,11 @@ export const FETCH_USED_ITEM = gql`
         lat
         lng
       }
+      seller {
+        email
+      }
       soldAt
       createdAt
-      updatedAt
-      deletedAt
     }
   }
 `;

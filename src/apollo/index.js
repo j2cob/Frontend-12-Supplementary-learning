@@ -21,7 +21,7 @@ export default function ApolloSetting(props) {
   // 리프레시 토큰 만료 에러 캐치 & 발급
   const errorLink = onError(({ graphQLErrors, operation, forward }) => {
     // 1-1. 에러를 캐치
-    // console.log(graphQLErrors);
+    console.log(graphQLErrors);
     if (graphQLErrors) {
       for (const err of graphQLErrors) {
         // 1-2. 해당 에러가 토큰만료 에러인지 체크(UNAUTHENTICATED)
@@ -49,10 +49,9 @@ export default function ApolloSetting(props) {
 
   const uploadLink = createUploadLink({
     uri: "https://backend-practice.codebootcamp.co.kr/graphql",
-    headers: { Authorization: `Bearer ${accessToken}` },
     credentials: "include",
+    headers: { Authorization: accessToken ? `Bearer ${accessToken}` : "" },
   });
-
   const client = new ApolloClient({
     link: ApolloLink.from([uploadLink]),
     cache: new InMemoryCache(),
@@ -62,6 +61,9 @@ export default function ApolloSetting(props) {
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       setAccessToken(localStorage.getItem("accessToken") || "");
+    }
+    if (localStorage.getItem("email")) {
+      setUserInfo(localStorage.getItem("email") || "");
     }
   }, []);
 

@@ -1,11 +1,34 @@
-import { accessTokenState } from "@/src/store/atom";
+import { LOGOUT_USER } from "@/src/graphql/logoutUser";
+import { accessTokenState, userInfoState } from "@/src/store/atom";
+import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import Link from "next/link";
-import { useRecoilValue } from "recoil";
+import { useRouter } from "next/router";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-export default function Header({ user }) {
+export default function Header() {
+  const route = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
+  const [token, setToken] = useRecoilState(accessTokenState);
+  const [user, setUser] = useRecoilState(userInfoState);
+
+  const onCompletedLogout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("accessToken");
+  };
+
+  const [logout] = useMutation(LOGOUT_USER, {
+    onCompleted: onCompletedLogout,
+  });
+  const onClickLogin = () => {
+    if (accessToken) {
+      logout();
+    } else {
+      route.push("/login");
+    }
+  };
   return (
     <Container>
       <Top>
@@ -19,8 +42,10 @@ export default function Header({ user }) {
         </Link>
 
         <div>
-          <Link href="/login">로그인</Link>
-          <Link href="/join">{user ? "로그아웃" : "회원가입"}</Link>
+          <button onClick={onClickLogin}>
+            {accessToken ? "로그아웃" : "로그인"}
+          </button>
+          {!accessToken && <Link href="/join">회원가입</Link>}
           <Link href="/cart">
             장바구니<Badge>0</Badge>
           </Link>
@@ -58,6 +83,11 @@ const Top = styled.div({
   a: {
     margin: "0 28px",
     fontSize: 14,
+  },
+  button: {
+    border: 0,
+    cursor: "pointer",
+    backgroundColor: "transparent",
   },
 });
 const Badge = styled.span({

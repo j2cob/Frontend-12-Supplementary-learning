@@ -1,20 +1,26 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { accessTokenState } from "@/src/store/atom";
+import { accessTokenState, userInfoState } from "@/src/store/atom";
 import { LOGIN_USER } from "@/src/graphql/loginUser";
+import { FETCH_USER_LOGGEDIN } from "@/src/graphql/fetchUserLoggedIn";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useRecoilState(accessTokenState);
+  const [user, setUser] = useRecoilState(userInfoState);
 
   const onCompletedCreateUser = (data) => {
     setToken(data?.loginUser.accessToken);
+    setUser({
+      email,
+    });
     localStorage.setItem("accessToken", data?.loginUser.accessToken);
+    localStorage.setItem("email", email);
     router.replace("/");
   };
 

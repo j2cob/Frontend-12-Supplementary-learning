@@ -11,25 +11,19 @@ import { FETCH_USED_ITEMS } from "@/src/graphql/fetchUsedItems";
 
 function Brand() {
   const router = useRouter();
-  const [list, setList] = useState([]);
-  const [page, setPage] = useState(1);
   const [bestList, setBestList] = useState([]);
 
   const onCompletedFetchUsedItemsOfTheBest = (data) => {
     setBestList(data.fetchUseditemsOfTheBest);
   };
 
-  const onCompletedFetchUsedItems = (data) => {
-    setList(data.fetchUseditems);
-  };
-
   useQuery(FETCH_USED_ITEMS_OF_THE_BEST, {
     onCompleted: onCompletedFetchUsedItemsOfTheBest,
   });
+
   const { data, fetchMore } = useQuery(FETCH_USED_ITEMS, {
-    onCompleted: onCompletedFetchUsedItems,
     variables: {
-      page,
+      page: 0,
     },
   });
 
