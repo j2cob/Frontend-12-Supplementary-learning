@@ -21,24 +21,12 @@ export default function Home() {
   return (
     <>
       <Slider {...settings}>
-        <SliderContainer>
-          <h3> slider 1</h3>
-        </SliderContainer>
-        <SliderContainer>
-          <h3> slider 2</h3>
-        </SliderContainer>
-        <SliderContainer>
-          <h3> slider 3</h3>
-        </SliderContainer>
-        <SliderContainer>
-          <h3> slider 4</h3>
-        </SliderContainer>
-        <SliderContainer>
-          <h3> slider 5</h3>
-        </SliderContainer>
-        <SliderContainer>
-          <h3> slider 6</h3>
-        </SliderContainer>
+        <SliderContainer></SliderContainer>
+        <SliderContainer bg={"red"}></SliderContainer>
+        <SliderContainer bg={"green"}></SliderContainer>
+        <SliderContainer bg={"yellow"}></SliderContainer>
+        <SliderContainer bg={"skyblue"}></SliderContainer>
+        <SliderContainer bg={"black"}></SliderContainer>
       </Slider>
       <Title>New Arrival</Title>
       <List>
@@ -50,13 +38,13 @@ export default function Home() {
   );
 }
 
-const SliderContainer = styled.div({
+const SliderContainer = styled.div((props) => ({
   height: 750,
-  background: "#ddd",
+  background: props.bg || "#ddd",
   fontSize: 30,
   textAlign: "center",
   lineHeight: "750px",
-});
+}));
 const Title = styled.p({
   marginTop: 90,
   marginBottom: 98,
