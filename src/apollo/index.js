@@ -31,8 +31,7 @@ export default function ApolloSetting(props) {
             getAccessToken().then((newAccessToken) => {
               // 2-2. 재발급 받은 accessToken 저장하기
               setAccessToken(newAccessToken);
-              console.log(newAccessToken);
-              localStorage.setItem("accessToken", data?.loginUser.accessToken);
+              localStorage.setItem("accessToken", newAccessToken);
               // 3-1. 재발급 받은 accessToken으로 방금 실패한 쿼리 재요청하기
               operation.setContext({
                 headers: {

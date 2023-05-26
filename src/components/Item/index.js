@@ -1,13 +1,14 @@
+import { useAuthRouter } from "@/src/hooks/useAuthRouter";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function Item({ item }) {
-  const router = useRouter();
+  const { getRouterBlock } = useAuthRouter();
   return (
     <Container
       onClick={() => {
-        router.push(`/brand/${item._id}`);
+        getRouterBlock(`/brand/${item._id}`);
       }}
     >
       <ThumbnailImage>

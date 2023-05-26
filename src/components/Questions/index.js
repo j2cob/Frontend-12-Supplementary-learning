@@ -13,6 +13,7 @@ export default function Questions({ user, useditemId }) {
 
   const { data, refetch, fetchMore } = useQuery(FETCH_USED_ITEM_QUESTION, {
     variables: { page: 0, useditemId },
+    skip: !useditemId,
   });
   const [createQuestion] = useMutation(CREATE_USET_ITEM_QUESTION, {
     onCompleted: () => refetch(),

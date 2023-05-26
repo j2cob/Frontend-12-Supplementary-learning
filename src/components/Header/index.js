@@ -8,9 +8,10 @@ import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useState } from "react";
 import ChargeModal from "../ChargeModal";
+import { useAuthRouter } from "@/src/hooks/useAuthRouter";
 
 export default function Header() {
-  const route = useRouter();
+  const { getRouterBlock } = useAuthRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const [token, setToken] = useRecoilState(accessTokenState);
   const [user, setUser] = useRecoilState(userInfoState);
@@ -30,7 +31,7 @@ export default function Header() {
     if (accessToken) {
       logout();
     } else {
-      route.push("/login");
+      getRouterBlock("/login");
     }
   };
 
@@ -63,20 +64,20 @@ export default function Header() {
             {accessToken ? "로그아웃" : "로그인"}
           </button>
           {!accessToken && <Link href="/join">회원가입</Link>}
-          <Link href="/cart">
+          <button onClick={() => getRouterBlock("/cart")}>
             장바구니<Badge>0</Badge>
-          </Link>
+          </button>
         </div>
       </Top>
       <Nav>
         <Inner>
-          <Link href="/brand">BRAND</Link>
-          <Link href="/category">CATEGORY</Link>
-          <Link href="/life">LIFE</Link>
-          <Link href="/beauty">BEAUTY</Link>
-          <Line />
-          <Link href="/style">#STYLE</Link>
-          <Link href="/event">EVENT</Link>
+          <button onClick={() => getRouterBlock("/brand")}>BRAND</button>
+          <button onClick={() => getRouterBlock("/category")}>CATEGORY</button>
+          <button onClick={() => getRouterBlock("/life")}>LIFE</button>
+          <button onClick={() => getRouterBlock("/beauty")}>BEAUTY</button>
+          <button />
+          <button onClick={() => getRouterBlock("/style")}>#STYLE</button>
+          <button onClick={() => getRouterBlock("/event")}>EVENT</button>
         </Inner>
       </Nav>
       <ChargeModal isModalOpen={isOpenCharge} onClose={onCloseModal} />
@@ -133,12 +134,16 @@ const Inner = styled.div({
   maxWidth: "1220px",
   margin: "0 auto",
   padding: "40px 0",
-  a: {
+  button: {
     display: "inline-block",
     fontSize: 22,
     fontWeight: 700,
     letterSpacing: "-0.5px",
     marginRight: 122,
+    background: "transparent",
+    color: "#fff",
+    border: 0,
+    cursor: "pointer",
     "&:last-child": {
       margin: 0,
     },

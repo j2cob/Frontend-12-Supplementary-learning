@@ -5,25 +5,29 @@ import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import ImageUpload from "@/src/components/ImageUpload";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { CREATE_USED_ITEM } from "@/src/graphql/createUsedItem";
 import { FETCH_USED_ITEM } from "@/src/graphql/fetchUsedItem";
 import { UPDATE_USED_ITEM } from "@/src/graphql/updateUsedItem";
+import Map from "@/src/components/Map";
 
 const ReactQuill = dynamic(async () => await import("react-quill"), {
   ssr: false,
 });
+
 export default function Add() {
   const [isEdit, setIsEdit] = useState(false);
   const [contents, setContents] = useState("");
   const [images, setImages] = useState([]);
+  const [useditemAddress, setUseditemAddress] = useState(null);
   const router = useRouter();
 
   const onCompleted = () => {
     alert(isEdit ? "수정이 완료 됬습니다." : "등록이 완료 됬습니다.");
     router.back();
   };
+
   const [createUsedItem] = useMutation(CREATE_USED_ITEM, {
     onCompleted,
   });
@@ -45,31 +49,26 @@ export default function Add() {
       return;
     }
     const tagList = tags.split("#").filter((e) => e);
+    const input = {
+      name,
+      remarks,
+      contents,
+      price: Number(price),
+      tags: tagList,
+      images,
+      useditemAddress,
+    };
     if (isEdit) {
       updateUsedItem({
         variables: {
           useditemId: router?.query?.id,
-          updateUseditemInput: {
-            name,
-            remarks,
-            contents,
-            price: Number(price),
-            tags: tagList,
-            images,
-          },
+          updateUseditemInput: input,
         },
       });
     } else {
       createUsedItem({
         variables: {
-          createUseditemInput: {
-            name,
-            remarks,
-            contents,
-            price: Number(price),
-            tags: tagList,
-            images,
-          },
+          createUseditemInput: input,
         },
       });
     }
@@ -100,6 +99,10 @@ export default function Add() {
     onCompleted: onCompletedFetchUsedItem,
   });
 
+  const onChangeMap = (value) => {
+    setUseditemAddress({ ...useditemAddress, ...value });
+  };
+
   useEffect(() => {
     if (router.query?.id) {
       setIsEdit(true);
@@ -128,7 +131,6 @@ export default function Add() {
             {...register("remarks")}
           />
         </Row>
-
         <Row>
           <Label>상품 내용</Label>
           <Textarea>
@@ -155,31 +157,7 @@ export default function Add() {
             {...register("tags")}
           />
         </Row>
-
-        <div>
-          <Label>브랜드 위치</Label>
-          <MapRow>
-            <Image
-              className="icon"
-              src="/images/image-map.png"
-              width={384}
-              height={252}
-              alt="image"
-            />
-            <div style={{ width: "100%", marginLeft: 26 }}>
-              <CodeInput
-                placeholder="07250"
-                type="text"
-                {...register("address")}
-              />
-              <CodeButton>우편번호 검색</CodeButton>
-              <InputWrap>
-                <input type="text" />
-                <input type="text" />
-              </InputWrap>
-            </div>
-          </MapRow>
-        </div>
+        <Map onChange={onChangeMap} />
         <ImageUpload images={images} setImages={setImages} />
       </Form>
       <ButtonContainer>
@@ -203,46 +181,11 @@ const Title = styled.p({
   paddingBottom: 30,
   borderBottom: "3px solid #555",
 });
-const InputWrap = styled.div({
-  marginTop: 26,
-  input: {
-    marginBottom: 24,
-  },
-});
-const MapRow = styled.div({
-  paddingBottom: 26,
-  marginBottom: 26,
-  marginTop: 38,
-  display: "flex",
-  alignItems: "center",
-  borderBottom: "1px solid #999999",
-});
 const Row = styled.div({
   display: "flex",
   paddingBottom: 26,
   marginBottom: 26,
   borderBottom: "1px solid #999999",
-});
-const CodeButton = styled.button({
-  marginLeft: 16,
-  backgroundColor: "#000",
-  color: "#fff",
-  border: 0,
-  width: 124,
-  height: 52,
-  cursor: "pointer",
-  fontSize: 16,
-  fontWeight: 500,
-  opacity: 0.6,
-});
-const CodeInput = styled.input({
-  "&&": {
-    width: 77,
-    height: 52,
-    border: "1px solid #BDBDBD",
-    background: "transparent",
-    padding: 16,
-  },
 });
 const Form = styled.div({
   margin: "41px 0 39px",

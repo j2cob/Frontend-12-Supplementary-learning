@@ -9,8 +9,9 @@ import { DELETE_USED_ITEM } from "@/src/graphql/deleteUsedItem";
 import { userInfoState } from "@/src/store/atom";
 import { useRecoilValue } from "recoil";
 import Questions from "@/src/components/Questions";
+import { withAuth } from "@/src/hooks/withAuth";
 
-export default function BrandDetail() {
+function BrandDetail() {
   const router = useRouter();
   const [data, setData] = useState(null);
   const user = useRecoilValue(userInfoState);
@@ -49,6 +50,7 @@ export default function BrandDetail() {
     variables: {
       useditemId: router?.query?.id,
     },
+    skip: !router?.query?.id,
     onCompleted: onCompletedFetchUsedItem,
   });
 
@@ -136,6 +138,8 @@ export default function BrandDetail() {
     </Container>
   );
 }
+
+export default withAuth(BrandDetail);
 
 const Container = styled.div({
   background: "#f5f5f5",
