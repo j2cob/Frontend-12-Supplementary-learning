@@ -10,6 +10,7 @@ export const withAuth = (Component) => (props) => {
       alert("로그인을 먼저 해주세요");
       router.push("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <Component {...props} />;

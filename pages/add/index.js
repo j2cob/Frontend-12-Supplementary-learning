@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import ImageUpload from "@/src/components/ImageUpload";
 import { useMutation } from "@apollo/client";
-import { CREATE_USED_ITEM } from "../graphql/createUsedItem";
 import { useRouter } from "next/router";
+import { CREATE_USED_ITEM } from "@/src/graphql/createUsedItem";
 
 const ReactQuill = dynamic(async () => await import("react-quill"), {
   ssr: false,
@@ -31,7 +31,6 @@ export default function Add() {
   };
 
   const onClickSubmit = async (data) => {
-    console.log(data);
     const { name, remarks, contents, price, tags } = data;
     if (!(name && remarks && contents && price && tags)) {
       alert("필수 입력 사항입니다.");

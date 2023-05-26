@@ -1,4 +1,4 @@
-import { RESTORE_ACCESS_TOKEN } from "@/pages/graphql/restoreAccessToken";
+import { RESTORE_ACCESS_TOKEN } from "@/src/graphql/restoreAccessToken";
 import { gql } from "@apollo/client";
 import { GraphQLClient } from "graphql-request";
 

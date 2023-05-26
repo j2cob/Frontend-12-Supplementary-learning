@@ -1,4 +1,4 @@
-import { UPLOAD_FILE } from "@/pages/graphql/uploadFile";
+import { UPLOAD_FILE } from "@/src/graphql/uploadFile";
 import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import Image from "next/image";

@@ -1,7 +1,7 @@
+import { CREATE_USER } from "@/src/graphql/createUser";
 import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { CREATE_USER } from "../graphql/createUser";
 
 export default function Join() {
   const [email, setEmail] = useState("");

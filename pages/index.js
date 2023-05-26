@@ -1,7 +1,7 @@
 import Item from "@/src/components/Item";
 import styled from "@emotion/styled";
 import { useQuery } from "@apollo/client";
-import { FETCH_USED_ITEMS } from "./graphql/fetchUsedItems";
+import { FETCH_USED_ITEMS } from "../src/graphql/fetchUsedItems";
 import { useState } from "react";
 import Slider from "react-slick";
 

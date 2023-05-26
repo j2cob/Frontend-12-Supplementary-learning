@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
 
-export default function DetailContent() {
+export default function DetailContent({ contents }) {
   return (
     <DetailContainer>
       <ContentTitle>DETAIL</ContentTitle>
-      asdas
+      <div dangerouslySetInnerHTML={{ __html: contents }}></div>
       <p className="caution">배송/교환/반품/AS 관련 유의사항</p>
       <p className="caution-desc">
         상품상세설명에 배송/교환/반품/취소 관련 안내가 기재된 경우 다음

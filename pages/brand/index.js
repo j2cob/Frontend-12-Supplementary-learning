@@ -4,10 +4,10 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { FETCH_USED_ITEMS_OF_THE_BEST } from "../graphql/fetchUseditemsOfTheBest";
-import { FETCH_USED_ITEMS } from "../graphql/fetchUsedItems";
 import InfiniteScroll from "react-infinite-scroller";
 import { withAuth } from "@/src/hooks/withAuth";
+import { FETCH_USED_ITEMS_OF_THE_BEST } from "@/src/graphql/fetchUseditemsOfTheBest";
+import { FETCH_USED_ITEMS } from "@/src/graphql/fetchUsedItems";
 
 function Brand() {
   const router = useRouter();

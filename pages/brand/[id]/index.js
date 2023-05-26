@@ -1,24 +1,78 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
-import DetailContent from "./DetailContent";
-import Comment from "./Comment";
+import { useMutation, useQuery } from "@apollo/client";
+import { FETCH_USED_ITEM } from "@/src/graphql/fetchUsedItem";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import DetailContent from "@/src/components/DetailContent";
+import { DELETE_USED_ITEM } from "@/src/graphql/deleteUsedItem";
+import { FETCH_USED_ITEM_QUESTION } from "@/src/graphql/fetchUsedItemQuestion";
+import Question from "@/src/components/Question";
 
 export default function BrandDetail() {
+  const router = useRouter();
+  const [data, setData] = useState(null);
+  const [page, setPage] = useState(0);
+  const [questions, setQuestions] = useState(null);
+
+  const onCompletedFetchUsedItem = (data) => {
+    setData(data.fetchUseditem);
+  };
+
+  const onCompletedFetchUsedItemQuestion = (data) => {
+    setQuestions(data.fetchUseditemQuestions);
+  };
+
+  const onCompletedDeleteUsedItem = (data) => {
+    alert("삭제되었습니다.");
+    router.back();
+  };
+
+  const onClickEdit = () => {
+    router.push(`/add/${router?.query?.id}`);
+  };
+
+  const onClickDelete = () => {
+    deleteUsedItem({
+      variables: {
+        useditemId: router?.query?.id,
+      },
+    });
+  };
+
+  const [deleteUsedItem] = useMutation(DELETE_USED_ITEM, {
+    onCompleted: onCompletedDeleteUsedItem,
+  });
+
+  useQuery(FETCH_USED_ITEM, {
+    variables: {
+      useditemId: router?.query?.id,
+    },
+    onCompleted: onCompletedFetchUsedItem,
+  });
+  useQuery(FETCH_USED_ITEM_QUESTION, {
+    variables: { page, useditemId: router?.query?.id },
+    onCompleted: onCompletedFetchUsedItemQuestion,
+  });
+
   const islike = true;
   return (
     <Container>
       <Row>
         <Image
-          src="http://placehold.it/600x400"
+          src={`https://storage.googleapis.com/${data?.images[0]}`}
           width={863}
           height={611}
           alt="image"
+          style={{
+            objectFit: "cover",
+          }}
         />
         <Left>
           <Brand>AVANDRESS</Brand>
-          <Name>[SET] HERO TRACK WIDE SET-UP PURPLE</Name>
+          <Name>{data?.name}</Name>
           <EditButtonContainer>
-            <button>
+            <button onClick={onClickEdit}>
               <Image
                 src="/images/icon-edit.png"
                 width={14}
@@ -26,7 +80,7 @@ export default function BrandDetail() {
                 alt="image"
               />
             </button>
-            <button style={{ marginLeft: 20 }}>
+            <button style={{ marginLeft: 20 }} onClick={onClickDelete}>
               <Image
                 src="/images/icon-delete-light.png"
                 width={14}
@@ -37,10 +91,10 @@ export default function BrandDetail() {
           </EditButtonContainer>
           <PriceContainer>
             <div>
-              <p style={{ marginRight: 92 }}>판매가</p>
-              <p>
-                <b>153,900</b>원
-              </p>
+              <span style={{ marginRight: 92 }}>판매가</span>
+              <span>
+                <b>{data?.price.toLocaleString()}</b>원
+              </span>
             </div>
             <Row>
               <b>MY</b>
@@ -64,23 +118,18 @@ export default function BrandDetail() {
               <b>Product</b>
             </Row>
           </PriceContainer>
-          <Content>
-            폴리에스테르 100% 원사로 스퀘어미터 450 밀도있게 편직하여 중량감과
-            두께를 트레이닝복에 최적화시켰으며 덤블텐타가공으로 축율 및 뒤틀림을
-            최소화 하였습니다. 수분을 빠르게 흡수하고 건조되도록 하였고
-            내마모성이 좋습니다. 기계세탁이 가능하며 세탁 후 빠르게 건조되어
-            관리가 용이합니다. 편직 가공에서 유연제 처리로 부드러운 터치감으로
-            편안합니다.
-          </Content>
-          <Tag>#트랙자켓 #아우터 #자켓</Tag>
+          <Content>{data?.remarks}</Content>
+          {data?.tags.map((tag, index) => (
+            <Tag key={index}>#{tag}</Tag>
+          ))}
           <ButtonContainer>
             <ButtonDark>BUY NOW</ButtonDark>
             <Button>SHOPPING BAG</Button>
           </ButtonContainer>
         </Left>
       </Row>
-      <DetailContent />
-      <Comment />
+      <DetailContent contents={data?.contents} />
+      <Question questions={questions} />
     </Container>
   );
 }
