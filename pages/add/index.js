@@ -1,30 +1,38 @@
 import styled from "@emotion/styled";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import ImageUpload from "@/src/components/ImageUpload";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { CREATE_USED_ITEM } from "@/src/graphql/createUsedItem";
+import { FETCH_USED_ITEM } from "@/src/graphql/fetchUsedItem";
+import { UPDATE_USED_ITEM } from "@/src/graphql/updateUsedItem";
 
 const ReactQuill = dynamic(async () => await import("react-quill"), {
   ssr: false,
 });
 export default function Add() {
+  const [isEdit, setIsEdit] = useState(false);
+  const [contents, setContents] = useState("");
+  const [images, setImages] = useState([]);
   const router = useRouter();
 
-  const onCompletedCreateUsedItem = () => {
-    //
+  const onCompleted = () => {
+    alert(isEdit ? "수정이 완료 됬습니다." : "등록이 완료 됬습니다.");
+    router.back();
   };
   const [createUsedItem] = useMutation(CREATE_USED_ITEM, {
-    onCompleted: onCompletedCreateUsedItem,
+    onCompleted,
+  });
+  const [updateUsedItem] = useMutation(UPDATE_USED_ITEM, {
+    onCompleted,
   });
   const { register, handleSubmit, setValue, trigger } = useForm({
     mode: "onChange",
   });
-  const [images, setImages] = useState([]);
 
   const onClickCancel = () => {
     router.back();
@@ -36,24 +44,69 @@ export default function Add() {
       alert("필수 입력 사항입니다.");
       return;
     }
-    createUsedItem({
-      variables: {
-        createUseditemInput: {
-          name,
-          remarks,
-          contents,
-          price: Number(price),
-          tags,
-          images,
+    const tagList = tags.split("#").filter((e) => e);
+    if (isEdit) {
+      updateUsedItem({
+        variables: {
+          useditemId: router?.query?.id,
+          updateUseditemInput: {
+            name,
+            remarks,
+            contents,
+            price: Number(price),
+            tags: tagList,
+            images,
+          },
         },
-      },
-    });
+      });
+    } else {
+      createUsedItem({
+        variables: {
+          createUseditemInput: {
+            name,
+            remarks,
+            contents,
+            price: Number(price),
+            tags: tagList,
+            images,
+          },
+        },
+      });
+    }
   };
 
   const onChangeContents = (value) => {
     setValue("contents", value === "<p><br></p>" ? "" : value);
     trigger("contents");
   };
+
+  const onCompletedFetchUsedItem = (data) => {
+    setValue("name", data.fetchUseditem?.name);
+    setValue("remarks", data.fetchUseditem?.remarks);
+    setValue("contents", data.fetchUseditem?.contents);
+    setValue("price", data.fetchUseditem?.price);
+    setValue("tags", data.fetchUseditem?.tags?.toString());
+    setValue("images", data.fetchUseditem?.images);
+    setImages(data.fetchUseditem?.images);
+    setContents(data.fetchUseditem?.contents);
+    trigger("contents");
+  };
+
+  const { refetch } = useQuery(FETCH_USED_ITEM, {
+    skip: true,
+    variables: {
+      useditemId: router?.query?.id,
+    },
+    onCompleted: onCompletedFetchUsedItem,
+  });
+
+  useEffect(() => {
+    if (router.query?.id) {
+      setIsEdit(true);
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
 
   return (
     <Container>
@@ -80,6 +133,7 @@ export default function Add() {
           <Label>상품 내용</Label>
           <Textarea>
             <ReactQuill
+              defaultValue={contents}
               placeholder="상품을 설명해주세요."
               onChange={onChangeContents}
             />
@@ -131,7 +185,7 @@ export default function Add() {
       <ButtonContainer>
         <Button onClick={onClickCancel}>취소</Button>
         <ButtonDark type="submit" onClick={handleSubmit(onClickSubmit)}>
-          등록
+          {isEdit ? "수정" : " 등록"}
         </ButtonDark>
       </ButtonContainer>
     </Container>

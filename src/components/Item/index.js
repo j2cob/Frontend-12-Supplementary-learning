@@ -29,7 +29,7 @@ export default function Item({ item }) {
       <Inner>
         <Row>
           <ItemTags>{item?.tags[0]}</ItemTags>
-          <ItemPrice>{item?.price}</ItemPrice>
+          <ItemPrice>{item?.price?.toLocaleString()}</ItemPrice>
         </Row>
         <ItemName>{item?.seller?.name}</ItemName>
         <ItemDescription>{item?.remarks}</ItemDescription>

@@ -25,7 +25,12 @@ export default function BrandDetail() {
   };
 
   const onClickEdit = () => {
-    router.push(`/add/${router?.query?.id}`);
+    router.push({
+      pathname: "/add",
+      query: {
+        id: router?.query?.id,
+      },
+    });
   };
 
   const onClickDelete = () => {
@@ -63,7 +68,7 @@ export default function BrandDetail() {
         <Left>
           <Brand>AVANDRESS</Brand>
           <Name>{data?.name}</Name>
-          {user?.email === data?.seller?.email && (
+          {user === data?.seller?.email && (
             <EditButtonContainer>
               <button onClick={onClickEdit}>
                 <Image
@@ -152,6 +157,7 @@ const EditButtonContainer = styled.div({
   button: {
     border: 0,
     background: "none",
+    cursor: "pointer",
   },
 });
 const Left = styled.div({

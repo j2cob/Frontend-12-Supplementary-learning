@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const updateUsedItem = gql`
+export const UPDATE_USED_ITEM = gql`
   mutation updateUseditem(
     $updateUseditemInput: UpdateUseditemInput!
     $useditemId: ID!

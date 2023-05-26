@@ -6,7 +6,7 @@ export const withAuth = (Component) => (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!localStorage.getItem("codebootcamp")) {
+    if (!localStorage.getItem("accessToken")) {
       alert("로그인을 먼저 해주세요");
       router.push("/");
     }
