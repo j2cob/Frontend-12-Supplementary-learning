@@ -3,6 +3,7 @@ import {
   ApolloLink,
   ApolloProvider,
   InMemoryCache,
+  fromPromise,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { getAccessToken } from "../util/getAccessToken";
@@ -21,7 +22,6 @@ export default function ApolloSetting(props) {
   // 리프레시 토큰 만료 에러 캐치 & 발급
   const errorLink = onError(({ graphQLErrors, operation, forward }) => {
     // 1-1. 에러를 캐치
-    console.log(graphQLErrors);
     if (graphQLErrors) {
       for (const err of graphQLErrors) {
         // 1-2. 해당 에러가 토큰만료 에러인지 체크(UNAUTHENTICATED)
@@ -52,8 +52,9 @@ export default function ApolloSetting(props) {
     credentials: "include",
     headers: { Authorization: accessToken ? `Bearer ${accessToken}` : "" },
   });
+
   const client = new ApolloClient({
-    link: ApolloLink.from([uploadLink]),
+    link: ApolloLink.from([errorLink, uploadLink]),
     cache: new InMemoryCache(),
     connectToDevTools: true,
   });

@@ -40,7 +40,6 @@ export default function Header() {
   };
 
   const onCloseModal = () => {
-    console.log("onCloseModal");
     setIsOpenCharge(false);
   };
 

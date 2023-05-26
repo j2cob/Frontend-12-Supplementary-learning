@@ -13,7 +13,13 @@ export default function ChargeModal({ isModalOpen, onClose }) {
     setIsShow(false);
   };
   return (
-    <ModalContainer width={464} title="" open={isModalOpen} footer={null}>
+    <ModalContainer
+      centered
+      width={464}
+      title=""
+      open={isModalOpen}
+      footer={null}
+    >
       <CloseButton onClick={onClose}>
         <Image
           src="/images/icon-delete.png"
