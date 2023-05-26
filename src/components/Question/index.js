@@ -4,21 +4,22 @@ import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroller";
-import { useRecoilValue } from "recoil";
 import Answer from "../Answer";
 import QuestionButtons from "../QuestionButtons";
-import { CREATE_USET_ITEM_QUESTION_ANSWER } from "@/src/graphql/createUsedItemQuestionAnswer";
+import { CREATE_USED_ITEM_QUESTION_ANSWER } from "@/src/graphql/createUsedItemQuestionAnswer";
 import { useMutation, useQuery } from "@apollo/client";
-import Answers from "../Answers";
 import { FETCH_USED_ITEM_QUESTION_ANSWER } from "@/src/graphql/fetchUseditemQuestionAnswers";
+import { UPDATE_USED_ITEM_QUESTION } from "@/src/graphql/updateUsedItemQuestion";
+import { DELETE_USED_ITEM_QUESTION } from "@/src/graphql/deleteUsedItemQuestion";
 
-export default function Question({ user, question }) {
+export default function Question({ user, question, refetch }) {
   const [isShowEdit, setIsShowEdit] = useState(false);
   const [isShowAnswer, setIsShowAnswer] = useState(false);
   const { register, resetField, handleSubmit } = useForm({
     mode: "onChange",
   });
 
+  //  수정
   const onClickIsShowEdit = () => {
     setIsShowEdit((prev) => !prev);
   };
@@ -27,8 +28,46 @@ export default function Question({ user, question }) {
     isShowEdit(false);
   };
 
-  const onClickDelete = () => {};
+  const onClickUpdate = async (data) => {
+    const { contents } = data;
+    updateUsedItemQuestion({
+      variables: {
+        updateUseditemQuestionInput: {
+          contents,
+        },
+        useditemQuestionId: question?._id,
+      },
+    });
+  };
 
+  const onCompletedUpdateUsedItemQuestion = () => {
+    refetch();
+    resetField("contents");
+    setIsShowEdit(false);
+  };
+
+  const [updateUsedItemQuestion] = useMutation(UPDATE_USED_ITEM_QUESTION, {
+    onCompleted: onCompletedUpdateUsedItemQuestion,
+  });
+
+  // 삭제
+  const onClickDelete = () => {
+    deleteUsedItemQuestion({
+      variables: {
+        useditemQuestionId: question?._id,
+      },
+    });
+  };
+
+  const onCompletedDeleteUsedItemQuestion = () => {
+    refetch();
+  };
+
+  const [deleteUsedItemQuestion] = useMutation(DELETE_USED_ITEM_QUESTION, {
+    onCompleted: onCompletedDeleteUsedItemQuestion,
+  });
+
+  // 대댓글 등록
   const onClickIsShowAnswer = () => {
     setIsShowAnswer((prev) => !prev);
   };
@@ -38,16 +77,30 @@ export default function Question({ user, question }) {
   };
 
   const onClickRegistAnswer = async (data) => {
-    const { contents } = data;
+    const { answer } = data;
     createUsedItemQuestionAnswer({
       variables: {
         createUseditemQuestionAnswerInput: {
-          contents,
+          contents: answer,
         },
         useditemQuestionId: question?._id,
       },
     });
   };
+  const onCompletedCreateUsedItemQuestionAnswer = () => {
+    refetchAnswer();
+    resetField("answer");
+    setIsShowAnswer(false);
+  };
+
+  const [createUsedItemQuestionAnswer] = useMutation(
+    CREATE_USED_ITEM_QUESTION_ANSWER,
+    {
+      onCompleted: onCompletedCreateUsedItemQuestionAnswer,
+    }
+  );
+
+  // 대댓글 가져오기
 
   const onLoadMore = () => {
     if (answerData === undefined) return;
@@ -77,21 +130,9 @@ export default function Question({ user, question }) {
     });
   };
 
-  const onCompletedCreateUsedItemQuestionAnswer = () => {
-    refetch();
-    resetField("contents");
-    setIsShowAnswer(false);
-  };
-
-  const [createUsedItemQuestionAnswer] = useMutation(
-    CREATE_USET_ITEM_QUESTION_ANSWER,
-    {
-      onCompleted: onCompletedCreateUsedItemQuestionAnswer,
-    }
-  );
   const {
     data: answerData,
-    refetch,
+    refetch: refetchAnswer,
     fetchMore,
   } = useQuery(FETCH_USED_ITEM_QUESTION_ANSWER, {
     variables: {
@@ -99,76 +140,103 @@ export default function Question({ user, question }) {
       page: 0,
     },
   });
-
   return (
-    <QuestionItem>
-      <QuestionWriter>{question?.user?.name}</QuestionWriter>
-      <Right>
-        <Row>
-          <QuestionContents>{question.contents}</QuestionContents>
-          <div>
-            <span>{dayjs(question.createdAt).format("YYYY.MM.DD")}</span>
-            {user?.email === question?.user?.email ? (
-              <QuestionButtons
-                onClickEdit={onClickIsShowEdit}
-                onClickDelete={onClickDelete}
-              />
-            ) : (
-              <button onClick={onClickIsShowAnswer}>
-                <Image
-                  className="icon"
-                  src="/images/icon-comment.png"
-                  width={18}
-                  height={18}
-                  alt="image"
+    <>
+      {" "}
+      <QuestionItem>
+        <QuestionWriter>{question?.user?.name}</QuestionWriter>
+        <Right>
+          <Row style={{ paddingBottom: 40 }}>
+            <QuestionContents>{question.contents}</QuestionContents>
+            <Row>
+              <span>{dayjs(question.createdAt).format("YYYY.MM.DD")}</span>
+              {user === question?.user?.email && (
+                <QuestionButtons
+                  onClickEdit={onClickIsShowEdit}
+                  onClickDelete={onClickDelete}
                 />
-              </button>
-            )}
-          </div>
-        </Row>
-        {question && (
-          <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
-            {answerData?.fetchUseditemQuestionAnswers.map((item, index) => (
-              <Answer
-                key={item._id}
-                answer={item}
-                email={user}
-                id={question._id}
+              )}
+              <div>
+                <button onClick={onClickIsShowAnswer}>
+                  <Image
+                    className="icon"
+                    src="/images/icon-comment.png"
+                    width={18}
+                    height={18}
+                    alt="image"
+                  />
+                </button>
+              </div>
+            </Row>
+          </Row>
+          {question && (
+            <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
+              {answerData?.fetchUseditemQuestionAnswers.map((item, index) => (
+                <Answer
+                  key={item._id}
+                  answer={item}
+                  email={user}
+                  id={question._id}
+                />
+              ))}
+            </InfiniteScroll>
+          )}
+          {/* 대댓글 달기 */}
+          {isShowAnswer && (
+            <AnswerContainer>
+              <Textarea
+                style={{ height: 152 }}
+                row={3}
+                {...register("answer")}
+                placeholder="내용을 입력해 주세요."
               />
-            ))}
-          </InfiniteScroll>
-        )}
-        {/* 수정하기 */}
-        {isShowAnswer && (
-          <AnswerContainer>
-            <Textarea
-              style={{ height: 152 }}
-              row={3}
-              {...register("contents")}
-              placeholder="내용을 입력해 주세요."
-            />
-            <ButtonRow>
-              <LightButton type="submit" onClick={onClickCancelAnswer}>
-                취소하기
-              </LightButton>
+              <ButtonRow>
+                <LightButton onClick={onClickCancelAnswer}>
+                  취소하기
+                </LightButton>
 
-              <DarkButton
-                type="submit"
-                onClick={handleSubmit(onClickRegistAnswer)}
-              >
-                작성하기
-              </DarkButton>
-            </ButtonRow>
-          </AnswerContainer>
-        )}
-      </Right>
-    </QuestionItem>
+                <DarkButton
+                  type="submit"
+                  onClick={handleSubmit(onClickRegistAnswer)}
+                >
+                  작성하기
+                </DarkButton>
+              </ButtonRow>
+            </AnswerContainer>
+          )}
+        </Right>
+      </QuestionItem>
+      {/* 댓글 수정 */}
+      {isShowEdit && (
+        <EditContainer>
+          <Textarea
+            defaultValue={question.contents}
+            style={{ height: 76, padding: "27px 30px" }}
+            row={3}
+            {...register("contents")}
+            placeholder="내용을 입력해 주세요."
+          />
+          <ButtonRow>
+            <LightButton onClick={onClickCancelEdit}>취소하기</LightButton>
+
+            <DarkButton type="submit" onClick={handleSubmit(onClickUpdate)}>
+              수정하기
+            </DarkButton>
+          </ButtonRow>
+        </EditContainer>
+      )}
+    </>
   );
 }
 
 const AnswerContainer = styled.div({
   borderTop: "1px solid #C0C0C0",
   paddingTop: 20,
+});
+const EditContainer = styled.div({
+  borderTop: "1px solid #C0C0C0",
+  paddingTop: 20,
+  width: "100%",
 });
 const ButtonRow = styled.div({
   display: "flex",
@@ -219,13 +287,16 @@ const Row = styled.div({
   button: {
     border: 0,
     cursor: "pointer",
+    background: "transparent",
+    padding: 0,
+    margin: 0,
   },
 });
 const Right = styled.div({ width: "100%" });
 
 const QuestionItem = styled.div({
   borderTop: "1px solid #C0C0C0",
-  padding: "40px 0",
+  padding: "40px 0 0",
   display: "flex",
 });
 const QuestionWriter = styled.p({
@@ -240,6 +311,6 @@ const QuestionWriter = styled.p({
 });
 const QuestionContents = styled.p({
   fontSize: 15,
-  paddingBottom: 40,
   maxWidth: "calc(100% - 200px)",
+  whiteSpace: "pre-line",
 });

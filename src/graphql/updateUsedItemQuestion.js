@@ -5,9 +5,9 @@ export const UPDATE_USED_ITEM_QUESTION = gql`
     $updateUseditemQuestionInput: UpdateUseditemQuestionInput!
     $useditemQuestionId: ID!
   ) {
-    pdateUseditemQuestion(
-      updateUseditemQuestionInput: updateUseditemQuestionInput
-      useditemQuestionId: useditemQuestionId
+    updateUseditemQuestion(
+      updateUseditemQuestionInput: $updateUseditemQuestionInput
+      useditemQuestionId: $useditemQuestionId
     ) {
       _id
     }

@@ -16,9 +16,7 @@ export default function Login() {
 
   const onCompletedCreateUser = (data) => {
     setToken(data?.loginUser.accessToken);
-    setUser({
-      email,
-    });
+    setUser(email);
     localStorage.setItem("accessToken", data?.loginUser.accessToken);
     localStorage.setItem("email", email);
     router.replace("/");

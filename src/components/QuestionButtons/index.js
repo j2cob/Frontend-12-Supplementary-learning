@@ -1,8 +1,9 @@
+import styled from "@emotion/styled";
 import Image from "next/image";
 
 export default function QuestionButtons({ onClickEdit, onClickDelete }) {
   return (
-    <div>
+    <Container>
       <button onClick={onClickEdit} style={{ marginLeft: 30 }}>
         <Image src="/images/icon-edit.png" width={14} height={13} alt="image" />
       </button>
@@ -14,6 +15,12 @@ export default function QuestionButtons({ onClickEdit, onClickDelete }) {
           alt="image"
         />
       </button>
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.div({
+  button: {
+    background: "transparent",
+  },
+});

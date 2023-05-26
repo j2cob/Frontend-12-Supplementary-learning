@@ -70,7 +70,12 @@ export default function Questions({ user, useditemId }) {
       </QuestionButton>
       <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
         {data?.fetchUseditemQuestions?.map((question) => (
-          <Question key={question._id} user={user} question={question} />
+          <Question
+            refetch={refetch}
+            key={question._id}
+            user={user}
+            question={question}
+          />
         ))}
       </InfiniteScroll>
     </QuestionContainer>
