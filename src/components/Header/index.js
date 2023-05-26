@@ -6,12 +6,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useState } from "react";
+import ChargeModal from "../ChargeModal";
 
 export default function Header() {
   const route = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const [token, setToken] = useRecoilState(accessTokenState);
   const [user, setUser] = useRecoilState(userInfoState);
+  const [isOpenCharge, setIsOpenCharge] = useState(false);
 
   const onCompletedLogout = () => {
     setToken(null);
@@ -22,6 +25,7 @@ export default function Header() {
   const [logout] = useMutation(LOGOUT_USER, {
     onCompleted: onCompletedLogout,
   });
+
   const onClickLogin = () => {
     if (accessToken) {
       logout();
@@ -29,6 +33,17 @@ export default function Header() {
       route.push("/login");
     }
   };
+
+  //충전
+  const onClickCharge = () => {
+    setIsOpenCharge(true);
+  };
+
+  const onCloseModal = () => {
+    console.log("onCloseModal");
+    setIsOpenCharge(false);
+  };
+
   return (
     <Container>
       <Top>
@@ -42,6 +57,9 @@ export default function Header() {
         </Link>
 
         <div>
+          {accessToken && (
+            <ChargeButton onClick={onClickCharge}>충전</ChargeButton>
+          )}
           <button onClick={onClickLogin}>
             {accessToken ? "로그아웃" : "로그인"}
           </button>
@@ -62,10 +80,15 @@ export default function Header() {
           <Link href="/event">EVENT</Link>
         </Inner>
       </Nav>
+      <ChargeModal isModalOpen={isOpenCharge} onClose={onCloseModal} />
     </Container>
   );
 }
 
+const ChargeButton = styled.button({
+  marginRight: 28,
+  textDecoration: "underline",
+});
 const Container = styled.div({
   position: "fixed",
   top: 0,
