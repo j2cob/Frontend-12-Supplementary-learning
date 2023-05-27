@@ -60,7 +60,8 @@ export default function Header() {
           {accessToken && (
             <>
               <p>
-                <b>홍길동</b>님 포인트 <em>1,490 P</em>
+                <b>{user.name}</b>님 포인트{" "}
+                <em>{user?.userPoint?.amount?.toLocaleString() || 0} P</em>
               </p>
               <ChargeButton onClick={onClickCharge}>충전</ChargeButton>
             </>

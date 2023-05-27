@@ -52,6 +52,8 @@ function BrandDetail() {
     });
   };
 
+  const onClickBuy = () => {};
+
   const onCompletedToggleUsedItemPick = () => {
     setIsLike((prev) => !prev);
   };
@@ -87,7 +89,7 @@ function BrandDetail() {
         <Left>
           <Brand>AVANDRESS</Brand>
           <Name>{data?.name}</Name>
-          {user === data?.seller?.email && (
+          {user.email === data?.seller?.email && (
             <EditButtonContainer>
               <button onClick={onClickEdit}>
                 <Image
@@ -143,7 +145,7 @@ function BrandDetail() {
             ))}
           </Row>
           <ButtonContainer>
-            <ButtonDark>BUY NOW</ButtonDark>
+            <ButtonDark onClick={onClickBuy}>BUY NOW</ButtonDark>
             <Button>SHOPPING BAG</Button>
           </ButtonContainer>
         </Left>
@@ -151,7 +153,7 @@ function BrandDetail() {
       <DetailContent contents={data?.contents} />
 
       {/* Questions */}
-      <Questions useditemId={router?.query?.id} user={user} />
+      <Questions useditemId={router?.query?.id} user={user.email} />
     </Container>
   );
 }

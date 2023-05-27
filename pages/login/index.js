@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { accessTokenState, userInfoState } from "@/src/store/atom";
@@ -14,11 +14,15 @@ export default function Login() {
   const [token, setToken] = useRecoilState(accessTokenState);
   const [user, setUser] = useRecoilState(userInfoState);
 
-  const onCompletedCreateUser = (data) => {
+  const onCompletedCreateUser = async (data) => {
     setToken(data?.loginUser.accessToken);
-    setUser(email);
+    const userInfo = await refetch();
+    setUser(userInfo.data?.fetchUserLoggedIn);
     localStorage.setItem("accessToken", data?.loginUser.accessToken);
-    localStorage.setItem("email", email);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
+    );
     router.replace("/");
   };
 
@@ -34,6 +38,10 @@ export default function Login() {
       variables: { email, password },
     });
   };
+
+  const { refetch } = useQuery(FETCH_USER_LOGGEDIN, {
+    skip: true,
+  });
 
   return (
     <>

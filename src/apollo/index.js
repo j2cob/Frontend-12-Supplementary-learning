@@ -53,8 +53,8 @@ export default function ApolloSetting(props) {
     if (localStorage.getItem("accessToken")) {
       setAccessToken(localStorage.getItem("accessToken") || "");
     }
-    if (localStorage.getItem("email")) {
-      setUserInfo(localStorage.getItem("email") || "");
+    if (localStorage.getItem("userInfo")) {
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo") || ""));
     }
   }, []);
 
