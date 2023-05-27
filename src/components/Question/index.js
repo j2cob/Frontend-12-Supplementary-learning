@@ -25,7 +25,7 @@ export default function Question({ user, question, refetch }) {
   };
 
   const onClickCancelEdit = () => {
-    isShowEdit(false);
+    setIsShowEdit(false);
   };
 
   const onClickUpdate = async (data) => {
@@ -235,7 +235,7 @@ const AnswerContainer = styled.div({
 });
 const EditContainer = styled.div({
   borderTop: "1px solid #C0C0C0",
-  paddingTop: 20,
+  padding: "20px 0",
   width: "100%",
 });
 const ButtonRow = styled.div({
