@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import Questions from "@/src/components/Questions";
 import { withAuth } from "@/src/hooks/withAuth";
 import { TOGGLE_USED_ITEM_PICK } from "@/src/graphql/toggleUseditemPick";
+import { CREATE_POINT_TRANSACTION_OF_BUYING_AND_SELLING } from "@/src/graphql/createPointTransactionOfBuyingAndSelling";
 
 function BrandDetail() {
   const router = useRouter();
@@ -52,7 +53,22 @@ function BrandDetail() {
     });
   };
 
-  const onClickBuy = () => {};
+  const onClickBuy = () => {
+    buyUsedItem({
+      variables: {
+        useritemId: router?.query?.id,
+      },
+    });
+  };
+
+  const onErrorBuy = (error) => {
+    alert(error.message);
+  };
+
+  const onCompletedbBuyUsedItem = () => {
+    alert("구매가 완료됬습니다.");
+    refetch();
+  };
 
   const onCompletedToggleUsedItemPick = () => {
     setIsLike((prev) => !prev);
@@ -66,7 +82,15 @@ function BrandDetail() {
     onCompleted: onCompletedDeleteUsedItem,
   });
 
-  useQuery(FETCH_USED_ITEM, {
+  const [buyUsedItem] = useMutation(
+    CREATE_POINT_TRANSACTION_OF_BUYING_AND_SELLING,
+    {
+      onError: onErrorBuy,
+      onCompleted: onCompletedbBuyUsedItem,
+    }
+  );
+
+  const { refetch } = useQuery(FETCH_USED_ITEM, {
     variables: {
       useditemId: router?.query?.id,
     },

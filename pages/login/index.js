@@ -25,7 +25,7 @@ export default function Login() {
         JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
       );
       router.replace("/");
-    }, 100);
+    }, 1000);
   };
 
   const [loginUser, {}] = useMutation(LOGIN_USER, {

@@ -1,14 +1,20 @@
 /* eslint-disable @next/next/no-sync-scripts */
+import { CREATE_POINT_TRANSACTION_OF_LOADING } from "@/src/graphql/createPointTransactionOfLoading";
+import { FETCH_USER_LOGGEDIN } from "@/src/graphql/fetchUserLoggedIn";
+import { userInfoState } from "@/src/store/atom";
+import { useMutation, useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
 import Modal from "antd/lib/modal";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 const list = ["100", "500", "2,000", "5,000"];
 
 export default function ChargeModal({ isModalOpen, onClose }) {
   const [value, setValue] = useState("");
   const [isShow, setIsShow] = useState("");
+  const [user, setUser] = useRecoilState(userInfoState);
 
   const onChangeValue = (value) => {
     setValue(value);
@@ -16,31 +22,59 @@ export default function ChargeModal({ isModalOpen, onClose }) {
   };
 
   const onClickCharge = () => {
+    if (value.length === 0) {
+      alert("충전금액을 선택해주세요.");
+      return;
+    }
     const IMP = window.IMP;
     IMP.init("imp68442614");
     IMP.request_pay(
       {
         pg: "html5_inicis",
         pay_method: "card",
-        name: "아이리버 무선 마우스 외 1개",
-        amount: 10000,
-        buyer_email: "parkj5028@gmail.com",
-        buyer_name: "홍길동",
-        buyer_tel: "010-4242-4242",
-        buyer_addr: "서울특별시 강남구 신사동",
-        buyer_postcode: "01181",
+        name: "포인트 충전",
+        amount: Number(value.replace(",", "")),
+        buyer_email: user?.email,
+        buyer_name: user?.name,
         m_redirect_url: "/",
       },
       function (rsp) {
         console.log(rsp);
         if (rsp.success) {
           alert("결제가 성공했습니다.");
+          createPoint({
+            variables: {
+              impUid: rsp.imp_uid,
+            },
+          });
         } else {
-          alert("결제에 실패했습니다.");
+          alert(rsp.error_msg);
+          createPoint({
+            variables: {
+              impUid: "imp_739726652866",
+            },
+          });
         }
       }
     );
   };
+
+  const onCompletedCharge = async () => {
+    const userInfo = await refetch();
+    setUser(userInfo.data?.fetchUserLoggedIn);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
+    );
+    onClose();
+  };
+
+  const { refetch } = useQuery(FETCH_USER_LOGGEDIN, {
+    skip: true,
+  });
+  const [createPoint] = useMutation(CREATE_POINT_TRANSACTION_OF_LOADING, {
+    onCompleted: onCompletedCharge,
+  });
 
   return (
     <>
@@ -110,6 +144,9 @@ const ModalContainer = styled(Modal)({
     padding: "76px 40px 40px",
     position: "relative",
   },
+  button: {
+    cursor: "pointer",
+  },
   input: { background: "transparent", border: 0 },
 });
 const Title = styled.p({ fontSize: 20, fontWeight: 700, textAlign: "center" });
@@ -134,6 +171,7 @@ const Item = styled.div({
   padding: 16,
   fontWeight: 700,
   borderBottom: "1px solid #E0E0E0",
+  cursor: "pointer",
 });
 
 const Button = styled.button({
