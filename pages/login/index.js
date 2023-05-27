@@ -14,16 +14,18 @@ export default function Login() {
   const [token, setToken] = useRecoilState(accessTokenState);
   const [user, setUser] = useRecoilState(userInfoState);
 
-  const onCompletedCreateUser = async (data) => {
+  const onCompletedCreateUser = (data) => {
     setToken(data?.loginUser.accessToken);
-    const userInfo = await refetch();
-    setUser(userInfo.data?.fetchUserLoggedIn);
     localStorage.setItem("accessToken", data?.loginUser.accessToken);
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
-    );
-    router.replace("/");
+    setTimeout(async () => {
+      const userInfo = await refetch();
+      setUser(userInfo.data?.fetchUserLoggedIn);
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
+      );
+      router.replace("/");
+    }, 100);
   };
 
   const [loginUser, {}] = useMutation(LOGIN_USER, {
