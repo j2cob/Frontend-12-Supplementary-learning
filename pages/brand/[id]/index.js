@@ -7,17 +7,18 @@ import { useState } from "react";
 import DetailContent from "@/src/components/DetailContent";
 import { DELETE_USED_ITEM } from "@/src/graphql/deleteUsedItem";
 import { userInfoState } from "@/src/store/atom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Questions from "@/src/components/Questions";
 import { withAuth } from "@/src/hooks/withAuth";
 import { TOGGLE_USED_ITEM_PICK } from "@/src/graphql/toggleUseditemPick";
 import { CREATE_POINT_TRANSACTION_OF_BUYING_AND_SELLING } from "@/src/graphql/createPointTransactionOfBuyingAndSelling";
+import { FETCH_USER_LOGGEDIN } from "@/src/graphql/fetchUserLoggedIn";
 
 function BrandDetail() {
   const router = useRouter();
   const [data, setData] = useState(null);
-  const user = useRecoilValue(userInfoState);
   const [islike, setIsLike] = useState(false);
+  const [user, setUser] = useRecoilState(userInfoState);
 
   const onCompletedFetchUsedItem = (data) => {
     setData(data.fetchUseditem);
@@ -65,8 +66,14 @@ function BrandDetail() {
     alert(error.message);
   };
 
-  const onCompletedbBuyUsedItem = () => {
+  const onCompletedbBuyUsedItem = async () => {
     alert("구매가 완료됬습니다.");
+    const userInfo = await refetchUserInfo();
+    setUser(userInfo.data?.fetchUserLoggedIn);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
+    );
     refetch();
   };
 
@@ -96,6 +103,10 @@ function BrandDetail() {
     },
     skip: !router?.query?.id,
     onCompleted: onCompletedFetchUsedItem,
+  });
+
+  const { refetch: refetchUserInfo } = useQuery(FETCH_USER_LOGGEDIN, {
+    skip: true,
   });
 
   return (
@@ -169,8 +180,15 @@ function BrandDetail() {
             ))}
           </Row>
           <ButtonContainer>
-            <ButtonDark onClick={onClickBuy}>BUY NOW</ButtonDark>
-            <Button>SHOPPING BAG</Button>
+            {data?.soldAt ? (
+              <Button>SOLD OUT</Button>
+            ) : (
+              <>
+                {" "}
+                <ButtonDark onClick={onClickBuy}>BUY NOW</ButtonDark>
+                <Button>SHOPPING BAG</Button>
+              </>
+            )}
           </ButtonContainer>
         </Left>
       </Row>

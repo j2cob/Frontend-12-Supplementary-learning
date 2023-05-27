@@ -27,7 +27,7 @@ export default function ChargeModal({ isModalOpen, onClose }) {
       return;
     }
     const IMP = window.IMP;
-    IMP.init("imp68442614");
+    IMP.init("imp49910675");
     IMP.request_pay(
       {
         pg: "html5_inicis",
@@ -36,10 +36,12 @@ export default function ChargeModal({ isModalOpen, onClose }) {
         amount: Number(value.replace(",", "")),
         buyer_email: user?.email,
         buyer_name: user?.name,
+        buyer_tel: "010-4242-4242",
+        buyer_addr: "서울특별시 강남구 신사동",
+        buyer_postcode: "01181",
         m_redirect_url: "/",
       },
       function (rsp) {
-        console.log(rsp);
         if (rsp.success) {
           alert("결제가 성공했습니다.");
           createPoint({
@@ -49,11 +51,6 @@ export default function ChargeModal({ isModalOpen, onClose }) {
           });
         } else {
           alert(rsp.error_msg);
-          createPoint({
-            variables: {
-              impUid: "imp_739726652866",
-            },
-          });
         }
       }
     );
