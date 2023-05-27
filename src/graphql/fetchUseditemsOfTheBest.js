@@ -9,6 +9,7 @@ export const FETCH_USED_ITEMS_OF_THE_BEST = gql`
       contents
       price
       tags
+      pickedCount
       images
       buyer {
         name

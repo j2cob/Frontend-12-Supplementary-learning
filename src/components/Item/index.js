@@ -1,10 +1,32 @@
+import { TOGGLE_USED_ITEM_PICK } from "@/src/graphql/toggleUseditemPick";
 import { useAuthRouter } from "@/src/hooks/useAuthRouter";
+import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 export default function Item({ item }) {
   const { getRouterBlock } = useAuthRouter();
+  const [islike, setIsLike] = useState(false);
+
+  const onTogglePick = (e) => {
+    e.stopPropagation();
+    toggleUsedItemPick({
+      variables: {
+        useditemId: item._id,
+      },
+    });
+  };
+
+  const onCompletedToggleUsedItemPick = () => {
+    setIsLike((prev) => !prev);
+  };
+
+  const [toggleUsedItemPick] = useMutation(TOGGLE_USED_ITEM_PICK, {
+    onCompleted: onCompletedToggleUsedItemPick,
+  });
+
   return (
     <Container
       onClick={() => {
@@ -19,13 +41,22 @@ export default function Item({ item }) {
           alt="image"
         />
       </ThumbnailImage>
-      <LikeButton>
-        <Image
-          src={"/images/icon-like.png"}
-          width={21}
-          height={18}
-          alt="image"
-        />
+      <LikeButton onClick={onTogglePick}>
+        {islike ? (
+          <Image
+            src="/images/icon-like-active.png"
+            width={18}
+            height={16}
+            alt="image"
+          />
+        ) : (
+          <Image
+            src="/images/icon-like-light.png"
+            width={18}
+            height={16}
+            alt="image"
+          />
+        )}
       </LikeButton>
       <Inner>
         <Row>
@@ -74,6 +105,8 @@ const LikeButton = styled.button({
   right: 34,
   border: 0,
   background: "none",
+  zIndex: 999,
+  cursor: "pointer",
 });
 const Row = styled.div({
   display: "flex",

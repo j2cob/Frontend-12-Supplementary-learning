@@ -56,9 +56,14 @@ export default function Header() {
           />
         </Link>
 
-        <div>
+        <Right>
           {accessToken && (
-            <ChargeButton onClick={onClickCharge}>충전</ChargeButton>
+            <>
+              <p>
+                <b>홍길동</b>님 포인트 <em>1,490 P</em>
+              </p>
+              <ChargeButton onClick={onClickCharge}>충전</ChargeButton>
+            </>
           )}
           <button onClick={onClickLogin}>
             {accessToken ? "로그아웃" : "로그인"}
@@ -67,7 +72,7 @@ export default function Header() {
           <button onClick={() => getRouterBlock("/cart")}>
             장바구니<Badge>0</Badge>
           </button>
-        </div>
+        </Right>
       </Top>
       <Nav>
         <Inner>
@@ -111,6 +116,21 @@ const Top = styled.div({
     border: 0,
     cursor: "pointer",
     backgroundColor: "transparent",
+  },
+});
+const Right = styled.div({
+  display: "flex",
+  alignItems: "center",
+  fontSize: 14,
+  p: {
+    marginRight: 20,
+  },
+  button: {
+    marginRight: 28,
+  },
+  em: {
+    textDecoration: "underline",
+    fontStyle: "initial",
   },
 });
 const Badge = styled.span({

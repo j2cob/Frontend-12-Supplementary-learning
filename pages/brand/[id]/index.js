@@ -10,14 +10,24 @@ import { userInfoState } from "@/src/store/atom";
 import { useRecoilValue } from "recoil";
 import Questions from "@/src/components/Questions";
 import { withAuth } from "@/src/hooks/withAuth";
+import { TOGGLE_USED_ITEM_PICK } from "@/src/graphql/toggleUseditemPick";
 
 function BrandDetail() {
   const router = useRouter();
   const [data, setData] = useState(null);
   const user = useRecoilValue(userInfoState);
+  const [islike, setIsLike] = useState(false);
 
   const onCompletedFetchUsedItem = (data) => {
     setData(data.fetchUseditem);
+  };
+
+  const onTogglePick = () => {
+    toggleUsedItemPick({
+      variables: {
+        useditemId: router?.query?.id,
+      },
+    });
   };
 
   const onCompletedDeleteUsedItem = (data) => {
@@ -42,6 +52,14 @@ function BrandDetail() {
     });
   };
 
+  const onCompletedToggleUsedItemPick = () => {
+    setIsLike((prev) => !prev);
+  };
+
+  const [toggleUsedItemPick] = useMutation(TOGGLE_USED_ITEM_PICK, {
+    onCompleted: onCompletedToggleUsedItemPick,
+  });
+
   const [deleteUsedItem] = useMutation(DELETE_USED_ITEM, {
     onCompleted: onCompletedDeleteUsedItem,
   });
@@ -54,7 +72,6 @@ function BrandDetail() {
     onCompleted: onCompletedFetchUsedItem,
   });
 
-  const islike = true;
   return (
     <Container>
       <Row>
@@ -99,7 +116,7 @@ function BrandDetail() {
             </div>
             <Row>
               <b>MY</b>
-              <LikeButton>
+              <LikeButton onClick={onTogglePick}>
                 {islike ? (
                   <Image
                     src="/images/icon-like-active.png"
@@ -193,6 +210,9 @@ const LikeButton = styled.button({
   cursor: "pointer",
   border: 0,
   padding: 0,
+  img: {
+    verticalAlign: "bottom",
+  },
 });
 const Content = styled.p({
   padding: 22,
