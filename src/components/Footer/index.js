@@ -39,6 +39,7 @@ const Container = styled.div({
   position: "fixed",
   bottom: 0,
   width: "100%",
+  zIndex: 9999,
   p: {
     fontSize: 14,
     letterSpacing: "-0.5px",
