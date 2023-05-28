@@ -1,9 +1,11 @@
 import { CREATE_USER } from "@/src/graphql/createUser";
 import { useMutation } from "@apollo/client";
 import styled from "@emotion/styled";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Join() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -11,6 +13,7 @@ export default function Join() {
 
   const onCompletedCreateUser = (data) => {
     alert("회원가입이 완료됬습니다.");
+    router.push("/login");
   };
 
   const [createUser, {}] = useMutation(CREATE_USER, {
