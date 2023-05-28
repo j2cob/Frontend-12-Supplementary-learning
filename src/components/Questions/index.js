@@ -74,16 +74,19 @@ export default function Questions({ user, useditemId }) {
       <QuestionButton type="submit" onClick={handleSubmit(onClickRegister)}>
         작성하기
       </QuestionButton>
-      <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
-        {data?.fetchUseditemQuestions?.map((question) => (
-          <Question
-            refetch={refetch}
-            key={question._id}
-            user={user}
-            question={question}
-          />
-        ))}
-      </InfiniteScroll>
+      {data?.fetchUseditemQuestions &&
+        data?.fetchUseditemQuestions.length > 0 && (
+          <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
+            {data?.fetchUseditemQuestions?.map((question) => (
+              <Question
+                refetch={refetch}
+                key={question._id}
+                user={user}
+                question={question}
+              />
+            ))}
+          </InfiniteScroll>
+        )}
     </QuestionContainer>
   );
 }

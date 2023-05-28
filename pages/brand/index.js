@@ -70,7 +70,7 @@ function Brand() {
       <MiddleRow>
         <AddButton onClick={onClickAdd}>상품 등록</AddButton>
         <Input>
-          <input type="text" name="search" value="" />
+          <input readOnly type="text" name="search" value="" />
           <Image
             src="/images/icon-search.png"
             width={24}
@@ -80,11 +80,13 @@ function Brand() {
         </Input>
       </MiddleRow>
 
-      <List pageStart={0} loadMore={onLoadMore} hasMore={true}>
-        {data?.fetchUseditems.map((item, index) => (
-          <Item key={item._id} item={item} />
-        ))}
-      </List>
+      {data?.fetchUseditems && data?.fetchUseditems.length > 0 && (
+        <List pageStart={0} loadMore={onLoadMore} hasMore={true}>
+          {data?.fetchUseditems.map((item, index) => (
+            <Item key={item._id} item={item} />
+          ))}
+        </List>
+      )}
     </Container>
   );
 }

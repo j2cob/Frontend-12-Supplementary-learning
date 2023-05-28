@@ -69,10 +69,12 @@ export default function Question({ user, question, refetch }) {
 
   // 대댓글 등록
   const onClickIsShowAnswer = () => {
+    resetField("answer");
     setIsShowAnswer((prev) => !prev);
   };
 
   const onClickCancelAnswer = () => {
+    resetField("answer");
     setIsShowAnswer(false);
   };
 
@@ -142,7 +144,6 @@ export default function Question({ user, question, refetch }) {
   });
   return (
     <>
-      {" "}
       <QuestionItem>
         <QuestionWriter>{question?.user?.name}</QuestionWriter>
         <Right>
@@ -169,7 +170,7 @@ export default function Question({ user, question, refetch }) {
               </div>
             </Row>
           </Row>
-          {question && (
+          {question && answerData?.fetchUseditemQuestionAnswers?.length > 0 && (
             <InfiniteScroll pageStart={0} loadMore={onLoadMore} hasMore={true}>
               {answerData?.fetchUseditemQuestionAnswers.map((item, index) => (
                 <Answer
@@ -231,7 +232,7 @@ export default function Question({ user, question, refetch }) {
 
 const AnswerContainer = styled.div({
   borderTop: "1px solid #C0C0C0",
-  paddingTop: 20,
+  padding: "20px 0",
 });
 const EditContainer = styled.div({
   borderTop: "1px solid #C0C0C0",

@@ -7,6 +7,7 @@ import styled from "@emotion/styled";
 import Modal from "antd/lib/modal";
 import Head from "next/head";
 import Image from "next/image";
+import Script from "next/script";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 const list = ["100", "500", "2,000", "5,000"];
@@ -75,16 +76,14 @@ export default function ChargeModal({ isModalOpen, onClose }) {
 
   return (
     <>
-      <Head>
-        <script
-          type="text/javascript"
-          src="https://code.jquery.com/jquery-1.12.4.min.js"
-        ></script>
-        <script
-          type="text/javascript"
-          src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
-        ></script>
-      </Head>
+      <Script
+        type="text/javascript"
+        src="https://code.jquery.com/jquery-1.12.4.min.js"
+      />
+      <Script
+        type="text/javascript"
+        src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
+      />
       <ModalContainer
         centered
         width={464}
