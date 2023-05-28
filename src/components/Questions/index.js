@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { CREATE_USET_ITEM_QUESTION } from "@/src/graphql/createUsedItemQuestion";
 
 export default function Questions({ user, useditemId }) {
-  const { register, handleSubmit } = useForm({
+  const { register, resetField, handleSubmit } = useForm({
     mode: "onChange",
   });
 
@@ -15,8 +15,13 @@ export default function Questions({ user, useditemId }) {
     variables: { page: 0, useditemId },
     skip: !useditemId,
   });
+
+  const onCompletedCreateQuestion = () => {
+    refetch();
+    resetField("contents");
+  };
   const [createQuestion] = useMutation(CREATE_USET_ITEM_QUESTION, {
-    onCompleted: () => refetch(),
+    onCompleted: onCompletedCreateQuestion,
   });
 
   const onClickRegister = async (data) => {
