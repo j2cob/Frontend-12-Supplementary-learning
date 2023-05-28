@@ -72,7 +72,7 @@ function Brand() {
         <Input>
           <input readOnly type="text" name="search" value="" />
           <Image
-            src="/images/icon-search.png"
+            src="/images/icon-brand-search.png"
             width={24}
             height={24}
             alt="image"
