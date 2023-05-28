@@ -12,20 +12,22 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useRecoilState(accessTokenState);
-  const [user, setUser] = useRecoilState(userInfoState);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
 
   const onCompletedCreateUser = (data) => {
     setToken(data?.loginUser.accessToken);
     localStorage.setItem("accessToken", data?.loginUser.accessToken);
-    setTimeout(async () => {
-      const userInfo = await refetch();
-      setUser(userInfo.data?.fetchUserLoggedIn);
-      localStorage.setItem(
-        "userInfo",
-        JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
-      );
-      router.replace("/");
-    }, 1000);
+    getUserInfo();
+  };
+
+  const getUserInfo = async () => {
+    const userInfo = await refetch();
+    setUserInfo(userInfo.data?.fetchUserLoggedIn);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify(userInfo?.data?.fetchUserLoggedIn)
+    );
+    router.replace("/");
   };
 
   const [loginUser, {}] = useMutation(LOGIN_USER, {

@@ -2,8 +2,11 @@ import Item from "@/src/components/Item";
 import styled from "@emotion/styled";
 import { useQuery } from "@apollo/client";
 import { FETCH_USED_ITEMS } from "../src/graphql/fetchUsedItems";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Slider from "react-slick";
+import { useRecoilState } from "recoil";
+import { userInfoState } from "@/src/store/atom";
+import { FETCH_USER_LOGGEDIN } from "@/src/graphql/fetchUserLoggedIn";
 
 export default function Home() {
   const [list, setList] = useState([]);
@@ -18,6 +21,7 @@ export default function Home() {
     dots: false,
     infinite: false,
   };
+
   return (
     <>
       <Slider {...settings}>

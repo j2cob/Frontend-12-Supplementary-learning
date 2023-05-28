@@ -21,6 +21,7 @@ export default function Header() {
     setToken(null);
     setUser(null);
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userInfo");
   };
 
   const [logout] = useMutation(LOGOUT_USER, {
@@ -99,7 +100,7 @@ const Container = styled.div({
   position: "fixed",
   top: 0,
   width: "100%",
-  zIndex: 999,
+  zIndex: 99999,
   background: "#fff",
 });
 const Top = styled.div({
@@ -127,7 +128,7 @@ const Right = styled.div({
     marginRight: 20,
   },
   button: {
-    marginRight: 28,
+    margin: "0 28px",
   },
   em: {
     textDecoration: "underline",

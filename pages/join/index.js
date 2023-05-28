@@ -15,6 +15,9 @@ export default function Join() {
 
   const [createUser, {}] = useMutation(CREATE_USER, {
     onCompleted: onCompletedCreateUser,
+    onError: (error) => {
+      alert(error.message);
+    },
   });
 
   const onClickLogin = () => {

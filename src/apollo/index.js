@@ -11,6 +11,7 @@ import { useRecoilState } from "recoil";
 import { createUploadLink } from "apollo-upload-client";
 import { accessTokenState, userInfoState } from "../store/atom";
 import { useEffect } from "react";
+import { setContext } from "apollo-link-context";
 
 export default function ApolloSetting(props) {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
@@ -40,21 +41,44 @@ export default function ApolloSetting(props) {
   const uploadLink = createUploadLink({
     uri: "https://backend-practice.codebootcamp.co.kr/graphql",
     credentials: "include",
-    headers: { Authorization: accessToken ? `Bearer ${accessToken}` : "" },
+    headers: {
+      Authorization:
+        typeof window !== "undefined" && localStorage.getItem("accessToken")
+          ? `Bearer ${localStorage.getItem("accessToken")}`
+          : "",
+    },
+  });
+
+  const authLink = setContext((_, { headers }) => {
+    // get the authentication token from local storage if it exists
+    const token = localStorage.getItem("accessToken");
+    // return the headers to the context so httpLink can read them
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      },
+    };
   });
 
   const client = new ApolloClient({
-    link: ApolloLink.from([errorLink, uploadLink]),
+    link: ApolloLink.from([errorLink, authLink, uploadLink]),
     cache: new InMemoryCache(),
     connectToDevTools: true,
   });
 
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      setAccessToken(localStorage.getItem("accessToken") || "");
-    }
-    if (localStorage.getItem("userInfo")) {
-      setUserInfo(JSON.parse(localStorage.getItem("userInfo") || ""));
+    if (typeof window !== "undefined") {
+      if (localStorage.getItem("accessToken")) {
+        setAccessToken(localStorage.getItem("accessToken") || "");
+      }
+      if (
+        localStorage.getItem("userInfo") &&
+        localStorage.getItem("userInfo") !== undefined
+      ) {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        setUserInfo(userInfo || "");
+      }
     }
   }, []);
 

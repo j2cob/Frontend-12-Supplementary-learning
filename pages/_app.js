@@ -22,4 +22,5 @@ export default function App({ Component, pageProps }) {
 const Container = styled.div({
   minHeight: "100vh",
   paddingTop: 216,
+  paddingBottom: 355,
 });
