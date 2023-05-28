@@ -9,31 +9,13 @@ export default function Map({ onChange }) {
   const [address, setAddress] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
 
-  const Postcode = () => {
-    const handleComplete = (data) => {
-      let fullAddress = data.address;
-      let extraAddress = "";
-
-      if (data.addressType === "R") {
-        if (data.bname !== "") {
-          extraAddress += data.bname;
-        }
-        if (data.buildingName !== "") {
-          extraAddress +=
-            extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-        }
-        fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-      }
-      setZipcode(data.zonecode);
-      setAddress(fullAddress);
-      onChange({
-        zipcode: data.zonecode,
-        address: fullAddress,
-        addressDetail,
-      });
-    };
-
-    return <DaumPostcodeEmbed onComplete={handleComplete} />;
+  const onChangeAddress = (e) => {
+    setAddress(e.target.value);
+    onChange({ address });
+  };
+  const onChangeZipcode = (e) => {
+    setZipcode(e.target.value);
+    onChange({ zipcode });
   };
 
   const onChangeAddressDetail = (e) => {
@@ -53,12 +35,17 @@ export default function Map({ onChange }) {
           alt="image"
         />
         <div style={{ width: "100%", marginLeft: 26 }}>
-          <CodeInput value={zipcode} disabled placeholder="07250" type="text" />
+          <CodeInput
+            value={zipcode}
+            onChange={onChangeZipcode}
+            placeholder="07250"
+            type="text"
+          />
           <CodeButton onClick={() => setIsShow((prev) => !prev)}>
             우편번호 검색
           </CodeButton>
           <InputWrap>
-            <input value={address} disabled type="text" />
+            <input value={address} onChange={onChangeAddress} type="text" />
             <input
               type="text"
               value={addressDetail}
@@ -67,7 +54,7 @@ export default function Map({ onChange }) {
           </InputWrap>
         </div>
       </MapRow>
-      {isShow && Postcode()}
+      {/* {isShow && Postcode()} */}
     </div>
   );
 }
